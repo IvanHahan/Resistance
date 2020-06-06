@@ -1,7 +1,7 @@
 import model
 from app import db
 import numpy as np
-from flask_socketio import emit
+from flask_socketio import emit, join_room, leave_room
 
 
 def create_game(username):
@@ -12,6 +12,8 @@ def create_game(username):
     db.session.add(player)
     db.session.add(game)
     db.session.commit()
+    join_room(game.id)
+    emit('game_created')
 
 
 def join_game(game_id, username):
@@ -79,7 +81,7 @@ def update_mission(mission_id, *args, **kwargs):
         proposal = model.TroopProposal(players=players,
                                        proposer=mission.game.players[mission.game.leader_idx],
                                        mission=mission)
-        voting = model.Voting()
+        voting = model.Voting(mission=mission)
         voting.votes = [model.Vote(voter=player) for player in players]
         proposal.voting = voting
         db.session.add(proposal)
@@ -111,10 +113,9 @@ def update_mission(mission_id, *args, **kwargs):
     return
 
 
-
 def start_game(game_id):
     game = db.session.query(model.Game).filter(model.Game.id == game_id).first()
-    game.status = model.GameStatus.ongoing
+    game.status = model.GameStatus.start_mission
     db.session.commit()
     update_game(game_id)
 

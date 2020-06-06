@@ -21,8 +21,8 @@ class Game(db.Model):
     host_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)
 
     host = db.relationship('Player', uselist=False)
-    players = db.relationship('Player', backpopulates='game', cascade='all, delete-orphan')
-    missions = db.relationship('Mission', backpopulates='game', cascade='all, delete-orphan')
+    players = db.relationship('Player', back_populates='game', cascade='all, delete-orphan')
+    missions = db.relationship('Mission', back_populates='game', cascade='all, delete-orphan')
 
 
 class RoundStage(enum.Enum):
@@ -55,7 +55,7 @@ class Mission(db.Model):
     voting = db.relationship('Voting', uselist=False, cascade='all, delete-orphan')
     troop_proposals = db.relationship('TroopProposal', uselist=True, cascade='all, delete-orphan')
     troop_members = db.relationship('Player', uselist=True, secondary=player_mission_association)
-    game = db.relationship('Game', uselist=False, backpopulates='missions')
+    game = db.relationship('Game', uselist=False, back_populates='missions')
 
 
 class Role(enum.Enum):
@@ -71,7 +71,7 @@ class Player(db.Model):
     role = db.Column(db.Enum(Role), nullable=True)
 
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
-    game = db.relationship('Game', uselist=False, backpopulates='players')
+    game = db.relationship('Game', uselist=False, back_populates='players')
 
 
 class TroopProposal(db.Model):
@@ -94,7 +94,10 @@ class Voting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     result = db.Column(db.Boolean, nullable=True)
 
-    votes = db.relationship('Vote', uselist=True, backpopulates='voting', cascade='all, delete-orphan')
+    mission_id = db.Column(db.Integer, db.ForeignKey('missions.id'), nullable=False)
+
+    votes = db.relationship('Vote', uselist=True, back_populates='voting', cascade='all, delete-orphan')
+    mission = db.relationship('Mission', uselist=False)
 
 
 class Vote(db.Model):
@@ -106,7 +109,6 @@ class Vote(db.Model):
     voter_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)
     mission_id = db.Column(db.Integer, db.ForeignKey('missions.id'), nullable=False)
 
-    mission = db.relationship('Mission', uselist=False)
     voter = db.relationship('Player', uselist=False)
-    voting = db.relationship('Voting', uselist=False, backpopulates='votes')
+    voting = db.relationship('Voting', uselist=False, back_populates='votes')
 

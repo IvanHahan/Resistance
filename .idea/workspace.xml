@@ -82,7 +82,7 @@
       <option name="presentableId" value="Default" />
       <updated>1591379262283</updated>
       <workItem from="1591379278764" duration="14095000" />
-      <workItem from="1591431774654" duration="6773000" />
+      <workItem from="1591431774654" duration="12732000" />
     </task>
     <task id="LOCAL-00001" summary="initial">
       <created>1591384700596</created>
@@ -98,7 +98,14 @@
       <option name="project" value="LOCAL" />
       <updated>1591435005070</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="update workflow&#10;connect socketIO">
+      <created>1591443593892</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1591443593892</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -107,43 +114,86 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="initial" />
     <MESSAGE value="WIP: add basic workflow" />
-    <option name="LAST_COMMIT_MESSAGE" value="WIP: add basic workflow" />
+    <MESSAGE value="update workflow&#10;connect socketIO" />
+    <option name="LAST_COMMIT_MESSAGE" value="update workflow&#10;connect socketIO" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="303" y="52" key="CommitChangelistDialog2" timestamp="1591435004621">
+    <state x="303" y="52" key="CommitChangelistDialog2" timestamp="1591471804497">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="303" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1591435004621" />
-    <state width="1398" height="237" key="GridCell.Tab.0.bottom" timestamp="1591422938909">
+    <state x="303" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1591471804497" />
+    <state width="1398" height="293" key="GridCell.Tab.0.bottom" timestamp="1591471712259">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="237" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1591422938909" />
-    <state width="1398" height="237" key="GridCell.Tab.0.center" timestamp="1591422938907">
+    <state width="1398" height="293" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1591471712259" />
+    <state width="1398" height="293" key="GridCell.Tab.0.center" timestamp="1591471712258">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="237" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1591422938907" />
-    <state width="1398" height="237" key="GridCell.Tab.0.left" timestamp="1591422938906">
+    <state width="1398" height="293" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1591471712258" />
+    <state width="1398" height="293" key="GridCell.Tab.0.left" timestamp="1591471712257">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="237" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1591422938906" />
-    <state width="1398" height="237" key="GridCell.Tab.0.right" timestamp="1591422938908">
+    <state width="1398" height="293" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1591471712257" />
+    <state width="1398" height="293" key="GridCell.Tab.0.right" timestamp="1591471712259">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="237" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1591422938908" />
+    <state width="1398" height="293" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1591471712259" />
+    <state width="1398" height="293" key="GridCell.Tab.1.bottom" timestamp="1591471716280">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="293" key="GridCell.Tab.1.bottom/0.0.1440.900@0.0.1440.900" timestamp="1591471716280" />
+    <state width="1398" height="293" key="GridCell.Tab.1.center" timestamp="1591471716273">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="293" key="GridCell.Tab.1.center/0.0.1440.900@0.0.1440.900" timestamp="1591471716273" />
+    <state width="1398" height="293" key="GridCell.Tab.1.left" timestamp="1591471716272">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="293" key="GridCell.Tab.1.left/0.0.1440.900@0.0.1440.900" timestamp="1591471716272" />
+    <state width="1398" height="293" key="GridCell.Tab.1.right" timestamp="1591471716278">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1398" height="293" key="GridCell.Tab.1.right/0.0.1440.900@0.0.1440.900" timestamp="1591471716278" />
     <state x="221" y="89" key="SettingsEditor" timestamp="1591379506587">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="221" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1591379506587" />
-    <state width="500" height="445" key="SwitcherDM" timestamp="1591443484592">
+    <state width="500" height="445" key="SwitcherDM" timestamp="1591470096196">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1591443484592" />
+    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1591470096196" />
     <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1591381459672">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1591381459672" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/events.py</url>
+          <line>19</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/events.py</url>
+          <line>13</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/events.py</url>
+          <line>24</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/events.py</url>
+          <line>7</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Resistance$app.coverage" NAME="app Coverage Results" MODIFIED="1591422938891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Resistance$app.coverage" NAME="app Coverage Results" MODIFIED="1591471679198" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

@@ -5,8 +5,9 @@ from app import db
 
 class GameStatus(enum.Enum):
     pending = 0
-    ongoing = 1
-    finished = 2
+    start_mission = 1
+    end_mission = 2
+    finished = 3
 
 
 class Game(db.Model):
@@ -25,10 +26,11 @@ class Game(db.Model):
 
 
 class RoundStage(enum.Enum):
-    troop_proposal = 0
-    troop_voting = 1
-    mission_voting = 2
-    mission_results = 3
+    proposal_request = 0
+    troop_proposal = 1
+    troop_voting = 2
+    mission_voting = 3
+    mission_results = 4
 
 
 player_mission_association = db.Table('player_mission', db.metadata,
@@ -65,7 +67,7 @@ class Player(db.Model):
     __tablename__ = 'players'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable=False, unique=False)
     role = db.Column(db.Enum(Role), nullable=True)
 
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
@@ -102,7 +104,9 @@ class Vote(db.Model):
     result = db.Column(db.Boolean, nullable=True)
 
     voter_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)
+    mission_id = db.Column(db.Integer, db.ForeignKey('missions.id'), nullable=False)
 
+    mission = db.relationship('Mission', uselist=False)
     voter = db.relationship('Player', uselist=False)
     voting = db.relationship('Voting', uselist=False, backpopulates='votes')
 

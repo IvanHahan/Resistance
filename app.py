@@ -9,11 +9,14 @@ app = Flask(__name__)
 app.config.from_object('config.Debug')
 
 db = SQLAlchemy(app)
-db.create_all()
+db.drop_all()
 
 socketio = SocketIO(app)
 
 import events
+import model
+
 if __name__ == '__main__':
 
+    db.create_all()
     socketio.run(app)

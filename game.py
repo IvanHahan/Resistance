@@ -5,15 +5,15 @@ from flask_socketio import emit, join_room, leave_room
 
 
 def create_game(username):
-    player = model.Player(name=username)
-    game = model.Game(host=player)
-    player.game = game
+    game = model.Game()
+    player = model.Player(name=username, game=game)
+    game.host = player
 
-    db.session.add(player)
     db.session.add(game)
+    db.session.add(player)
     db.session.commit()
     join_room(game.id)
-    emit('game_created')
+    # emit('game_created')
 
 
 def join_game(game_id, username):

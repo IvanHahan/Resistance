@@ -1,6 +1,6 @@
 import enum
 
-from app import db
+from __main__ import db
 
 
 class GameStatus(enum.Enum):
@@ -20,8 +20,9 @@ class Game(db.Model):
 
     host_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)
 
-    host = db.relationship('Player', uselist=False)
-    players = db.relationship('Player', back_populates='game', cascade='all, delete-orphan')
+    host = db.relationship('Player', uselist=False, foreign_keys=[host_id], post_update=True)
+    players = db.relationship('Player', uselist=True, back_populates='game', cascade='all, delete-orphan',
+                              foreign_keys='[Player.game_id]')
     missions = db.relationship('Mission', back_populates='game', cascade='all, delete-orphan')
 
 
@@ -51,8 +52,9 @@ class Mission(db.Model):
     stage = db.Column(db.Enum(RoundStage), default=RoundStage.troop_proposal, nullable=False)
 
     voting_id = db.Column(db.Integer, db.ForeignKey('votings.id'), nullable=True)
+    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
 
-    voting = db.relationship('Voting', uselist=False, cascade='all, delete-orphan')
+    voting = db.relationship('Voting', uselist=False, cascade='all, delete-orphan', single_parent=True)
     troop_proposals = db.relationship('TroopProposal', uselist=True, cascade='all, delete-orphan')
     troop_members = db.relationship('Player', uselist=True, secondary=player_mission_association)
     game = db.relationship('Game', uselist=False, back_populates='missions')
@@ -71,7 +73,7 @@ class Player(db.Model):
     role = db.Column(db.Enum(Role), nullable=True)
 
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
-    game = db.relationship('Game', uselist=False, back_populates='players')
+    game = db.relationship('Game', uselist=False, back_populates='players', foreign_keys=[game_id])
 
 
 class TroopProposal(db.Model):
@@ -80,11 +82,12 @@ class TroopProposal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     proposer_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)
-    voting_id = db.Column(db.Integer, db.ForeignKey('voting.id'), nullable=True)
+    voting_id = db.Column(db.Integer, db.ForeignKey('votings.id'), nullable=True)
+    mission_id = db.Column(db.Integer, db.ForeignKey('missions.id'), nullable=False)
 
-    members = db.relationship('Player', uselist=True, secondary='player_proposal_association')
+    members = db.relationship('Player', uselist=True, secondary=player_proposal_association)
     proposer = db.relationship('Player', uselist=False)
-    voting = db.relationship('Voting', uselist=False, cascade='all, delete-orphan')
+    voting = db.relationship('Voting', uselist=False, cascade='all, delete-orphan', single_parent=True)
     mission = db.relationship('Mission', uselist=False)
 
 
@@ -94,10 +97,7 @@ class Voting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     result = db.Column(db.Boolean, nullable=True)
 
-    mission_id = db.Column(db.Integer, db.ForeignKey('missions.id'), nullable=False)
-
     votes = db.relationship('Vote', uselist=True, back_populates='voting', cascade='all, delete-orphan')
-    mission = db.relationship('Mission', uselist=False)
 
 
 class Vote(db.Model):
@@ -107,7 +107,7 @@ class Vote(db.Model):
     result = db.Column(db.Boolean, nullable=True)
 
     voter_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)
-    mission_id = db.Column(db.Integer, db.ForeignKey('missions.id'), nullable=False)
+    voting_id = db.Column(db.Integer, db.ForeignKey('votings.id'), nullable=False)
 
     voter = db.relationship('Player', uselist=False)
     voting = db.relationship('Voting', uselist=False, back_populates='votes')

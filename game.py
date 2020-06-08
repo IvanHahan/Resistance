@@ -27,9 +27,10 @@ def join_game(game_id, username):
         return player.id
 
 
-def leave_game(player_id):
+def leave_game(player_id, game_id):
     db.session.query(model.Player).filter(model.Player.id == player_id).delete()
     db.session.commit()
+    leave_room(game_id)
 
 
 def update_voting(voting_id, player_id, result):

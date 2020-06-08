@@ -13,8 +13,8 @@ def on_join(username, game_id):
 
 @socketio.on('leave_game')
 def on_leave(player_id, game_id):
-    leave_game(player_id)
-    send(str(player_id) + ' has left the game.', broadcast=True)
+    leave_game(player_id, game_id)
+    send(str(player_id) + ' has left the game.', room=game_id)
 
 
 @socketio.on('start_game')

@@ -18,11 +18,18 @@ def create_game(username):
 
 def join_game(game_id, username):
     game = db.session.query(model.Game).filter(model.Game.id == game_id).first()
-    if len(game.players) < 10:
+    if game.players is None or len(game.players) < 10:
         player = model.Player(name=username)
         player.game = game
         db.session.add(player)
         db.session.commit()
+        join_room(game_id)
+        return player.id
+
+
+def leave_game(player_id):
+    db.session.query(model.Player).filter(model.Player.id == player_id).delete()
+    db.session.commit()
 
 
 def update_voting(voting_id, player_id, result):

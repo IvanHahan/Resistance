@@ -25,6 +25,9 @@ class Game(db.Model):
                               foreign_keys='[Player.game_id]')
     missions = db.relationship('Mission', back_populates='game', cascade='all, delete-orphan')
 
+    def start(self):
+        self.status = GameStatus.start_mission
+
 
 class RoundStage(enum.Enum):
     proposal_request = 0

@@ -15,14 +15,22 @@ class TestGame(TestCase):
             db.drop_all()
 
     def test_simulate_game(self):
-        clients = [socketio.test_client(self.app) for _ in range(5)]
-        host = clients[0]
-        host.connect()
-        host.emit('create_game', 'Ivan')
-        recieved = host.get_received()
+        host_client = socketio.test_client(self.app)
+        host_client.emit('create_game', 'Ivan')
+        recieved = host_client.get_received()
         assert recieved[0]['args'] == 'joined_game'
+
+        clients = [socketio.test_client(self.app) for _ in range(4)]
+
+        for i, client in enumerate(clients):
+            client.emit('join_game', str(i), 1)
+            recieved = client.get_received()
+            assert recieved[1]['name'] == 'player_joined'
+            assert recieved[1]['args'][0] is not None
+
         with self.app.app_context():
-            assert len(db.session.query(model.Player).all()) == 1
+            assert len(db.session.query(model.Player).all()) == 5
             assert len(db.session.query(model.Game).all()) == 1
+            assert len(db.session.query(model.Game.players).filter(model.Game.id == 1).all()) == 5
 
 

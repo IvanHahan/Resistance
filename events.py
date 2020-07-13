@@ -1,7 +1,7 @@
 from flask_socketio import send, join_room, leave_room, rooms, emit
 
-from __main__ import socketio
-from game import join_game, start_game, create_game, make_proposal, update_voting, leave_game
+from app import socketio
+from game import join_game, start_game, create_game, leave_game
 
 
 @socketio.on('join_game')

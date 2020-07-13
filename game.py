@@ -1,7 +1,8 @@
 import model
 from app import db
+from flask import current_app as app
 import numpy as np
-from flask_socketio import emit, join_room, leave_room
+from flask_socketio import emit, join_room, leave_room, send
 
 
 def create_game(username):
@@ -13,6 +14,7 @@ def create_game(username):
     db.session.add(player)
     db.session.commit()
     join_room(game.id)
+    send('joined_game')
 
 
 def join_game(game_id, username):

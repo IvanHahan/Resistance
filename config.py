@@ -14,3 +14,4 @@ class Test(Default):
     TESTING = True
     WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/resistance_test'
+    SQLALCHEMY_ECHO = True

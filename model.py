@@ -1,6 +1,6 @@
 import enum
 
-from __main__ import db
+from app import db
 from flask_socketio import emit, join_room, leave_room
 import numpy as np
 
@@ -20,7 +20,7 @@ class Game(db.Model):
     resistance_won = db.Column(db.Boolean, nullable=True)
     leader_idx = db.Column(db.Integer, nullable=False, default=-1)
 
-    host_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)
+    host_id = db.Column(db.Integer, db.ForeignKey('players.id', use_alter=True, name='fk_host_id'), nullable=True)
 
     host = db.relationship('Player', uselist=False, foreign_keys=[host_id], post_update=True)
     players = db.relationship('Player', uselist=True, back_populates='game', cascade='all, delete-orphan',
@@ -172,7 +172,7 @@ class Player(db.Model):
     name = db.Column(db.String, nullable=False, unique=False)
     role = db.Column(db.Enum(Role), nullable=True)
 
-    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
+    game_id = db.Column(db.Integer, db.ForeignKey('games.id', name='fk_game_id'), nullable=False)
     game = db.relationship('Game', uselist=False, back_populates='players', foreign_keys=[game_id])
 
 

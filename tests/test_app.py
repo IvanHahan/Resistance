@@ -36,10 +36,22 @@ class TestGame(TestCase):
             assert len(db.session.query(model.Game).all()) == 1
             assert len(db.session.query(model.Game.players).filter(model.Game.id == 1).all()) == 5
 
-        host_client.emit('start_game', host_id)
-
         for client in [host_client, *clients]:
             received = client.get_received()
+
+        host_client.emit('start_game', host_id)
+
+        for client, id in zip([host_client, *clients], [host_id, *player_ids]):
+            received = client.get_received()
+            leader_id = received[0]['args'][0]
+            if leader_id == id:
+                client.emit('make_proposal', (1, 2))
             print(received)
+
+        for client, id in zip([host_client, *clients], [host_id, *player_ids]):
+            received = client.get_received()
+            voters, voting_id = received[0]['args']
+            if id in voters:
+                client.emit('vote', voting_id)
 
 

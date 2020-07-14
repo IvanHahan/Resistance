@@ -19,6 +19,7 @@ class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     _status = db.Column(db.Enum(GameStatus), default=GameStatus.pending, nullable=False)
     resistance_won = db.Column(db.Boolean, nullable=True)
+    missions_to_win = db.Column(db.Integer, default=1, nullable=False) #todo: change to 3
     _leader_idx = db.Column(db.Integer, nullable=False, default=-1)
 
     host_id = db.Column(db.Integer, db.ForeignKey('players.id', use_alter=True, name='fk_host_id'), nullable=True)
@@ -44,10 +45,10 @@ class Game(db.Model):
     def _complete_game(self):
         fail_missions = len([mission for mission in self.missions if mission.voting.result is False])
         success_missions = len([mission for mission in self.missions if mission.voting.result is True])
-        if fail_missions == 3:
+        if fail_missions == self.missions_to_win:
             self.resistance_won = False
             return True
-        elif success_missions == 3:
+        elif success_missions == self.missions_to_win:
             self.resistance_won = True
             return True
         return False
@@ -138,7 +139,7 @@ class Mission(db.Model):
 
     def update(self, *args):
         if self._stage == RoundStage.proposal_request:
-            emit('query_proposal', self.game.next_leader().id, room=self.game.id)
+            emit('query_proposal', (self.game.next_leader().id, self.to_dict()), room=self.game.id)
 
         elif self._stage == RoundStage.troop_proposal:
             player_ids = args[0]
@@ -163,6 +164,12 @@ class Mission(db.Model):
         elif self._stage == RoundStage.mission_results:
             self.game.next()
             emit('mission_complete', self.voting.result, room=self.game.id)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'stage': self._stage,
+        }
 
 
 class Role(enum.Enum):

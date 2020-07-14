@@ -43,7 +43,8 @@ def on_create_game(username):
     db.session.add(player)
     db.session.commit()
     join_room(game.id)
-    send('joined_game')
+    emit('game_created', game.id)
+    emit('player_joined', player.id, room=game.id)
 
 
 @socketio.on('make_proposal')

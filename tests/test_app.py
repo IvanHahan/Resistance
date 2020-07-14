@@ -33,4 +33,6 @@ class TestGame(TestCase):
             assert len(db.session.query(model.Game).all()) == 1
             assert len(db.session.query(model.Game.players).filter(model.Game.id == 1).all()) == 5
 
+        host_client.emit('start_game')
+
 

@@ -1,8 +1,9 @@
 import enum
 
-from app import db
-from flask_socketio import emit, join_room, leave_room
 import numpy as np
+from flask_socketio import emit
+
+from app import db
 
 
 class GameStatus(enum.Enum):
@@ -18,7 +19,7 @@ class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     _status = db.Column(db.Enum(GameStatus), default=GameStatus.pending, nullable=False)
     resistance_won = db.Column(db.Boolean, nullable=True)
-    leader_idx = db.Column(db.Integer, nullable=False, default=-1)
+    _leader_idx = db.Column(db.Integer, nullable=False, default=-1)
 
     host_id = db.Column(db.Integer, db.ForeignKey('players.id', use_alter=True, name='fk_host_id'), nullable=True)
 
@@ -40,17 +41,6 @@ class Game(db.Model):
     def _current_mission(self):
         return self.missions[-1]
 
-    def _next_leader(self):
-        if self.leader_idx == len(self.players) - 1:
-            self.leader_idx = 0
-        else:
-            self.leader_idx += 1
-        leader = self.players[self.leader_idx]
-        return leader
-
-    def _current_leader(self):
-        return self.players[self.leader_idx]
-
     def _complete_game(self):
         fail_missions = len([mission for mission in self.missions if mission.voting.result is False])
         success_missions = len([mission for mission in self.missions if mission.voting.result is True])
@@ -62,6 +52,17 @@ class Game(db.Model):
             return True
         return False
 
+    def next_leader(self):
+        if self._leader_idx == len(self.players) - 1:
+            self._leader_idx = 0
+        else:
+            self._leader_idx += 1
+        leader = self.players[self._leader_idx]
+        return leader
+
+    def current_leader(self):
+        return self.players[self._leader_idx]
+
     def update(self):
         if self.status == GameStatus.pending:
             self.next()
@@ -71,6 +72,7 @@ class Game(db.Model):
         if self.status == GameStatus.end_mission:
             if self._complete_game():
                 self.next()
+                emit('game_complete', self.resistance_won)
             else:
                 self._set_status(GameStatus.start_mission)
                 self.update()
@@ -89,14 +91,15 @@ class RoundStage(enum.Enum):
 
 
 player_mission_association = db.Table('player_mission', db.metadata,
-                          db.Column('player_id', db.Integer, db.ForeignKey('players.id'), nullable=False),
-                          db.Column('mission_id', db.Integer, db.ForeignKey('missions.id'), nullable=False),
-                          )
+                                      db.Column('player_id', db.Integer, db.ForeignKey('players.id'), nullable=False),
+                                      db.Column('mission_id', db.Integer, db.ForeignKey('missions.id'), nullable=False),
+                                      )
 
 player_proposal_association = db.Table('player_proposal', db.metadata,
-                          db.Column('player_id', db.Integer, db.ForeignKey('players.id'), nullable=False),
-                          db.Column('troop_proposal_id', db.Integer, db.ForeignKey('troop_proposals.id'), nullable=False),
-                          )
+                                       db.Column('player_id', db.Integer, db.ForeignKey('players.id'), nullable=False),
+                                       db.Column('troop_proposal_id', db.Integer, db.ForeignKey('troop_proposals.id'),
+                                                 nullable=False),
+                                       )
 
 
 class Mission(db.Model):
@@ -129,9 +132,9 @@ class Mission(db.Model):
         db.session.commit()
         return proposal
 
-    def next(self):
+    def next(self, *args):
         self._set_status(RoundStage(int(self.status) + 1))
-        self.update()
+        self.update(args)
 
     def update(self, *args):
         if self._stage == RoundStage.proposal_request:
@@ -157,7 +160,9 @@ class Mission(db.Model):
             voting = self.voting
             voting.result = np.bitwise_or.reduce([vote.result for vote in voting.votes])
             self.next()
-            emit('mission_complete')
+        elif self._stage == self.RoundStage.mission_results:
+            self.game.next()
+            emit('mission_complete', self.voting.result)
 
 
 class Role(enum.Enum):
@@ -204,7 +209,7 @@ class Voting(db.Model):
         vote.result = result
 
         vote_complete = np.bitwise_or.reduce([vote.result is None for vote in self.votes]) is False
-        mission = db.query(Player).filter(Player.id == player_id).first().game.current_mission() # TODO: rewrite
+        mission = db.query(Player).filter(Player.id == player_id).first().game.current_mission()  # TODO: rewrite
         if vote_complete:
             mission.next()
         else:
@@ -222,4 +227,3 @@ class Vote(db.Model):
 
     voter = db.relationship('Player', uselist=False)
     voting = db.relationship('Voting', uselist=False, back_populates='votes')
-

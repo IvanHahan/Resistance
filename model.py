@@ -124,7 +124,7 @@ class Mission(db.Model):
     def _new_troop_proposal(self, player_ids):
         players = db.session.query(Player).filter(Player.id.in_(player_ids)).all()
         voting = Voting()
-        voting.votes = [Vote(voter=player) for player in players]
+        voting.votes = [Vote(voter=player) for player in self.game.players]
         proposal = TroopProposal(members=players,
                                  proposer=self.game.current_leader(),
                                  mission=self,
@@ -151,18 +151,18 @@ class Mission(db.Model):
 
         elif self._stage == RoundStage.troop_voting:
             voting = self.troop_proposals[-1].voting
-            voting.result = sum([v.result for v in voting.voting.votes]) > len(voting.voting.votes) // 2
+            voting.result = sum([v.result for v in voting.votes]) > len(voting.votes) // 2
             if voting.result:
                 self.troop_members = self.troop_proposals[-1].members
                 db.session.commit()
-                emit('start_voting', [player.id for player in self.troop_members.members], room=self.game.id)
+                emit('start_voting', [player.id for player in self.troop_members], room=self.game.id)
             else:
                 self._set_status(RoundStage.proposal_request)
                 self.update()
 
         elif self._stage == RoundStage.mission_voting:
             voting = self.voting
-            voting.result = np.bitwise_or.reduce([vote.result for vote in voting.votes])
+            voting.result = np.bitwise_and.reduce([vote.result for vote in voting.votes])
             self.next()
         elif self._stage == RoundStage.mission_results:
             self.game.next()
@@ -217,6 +217,7 @@ class Voting(db.Model):
     def vote(self, player_id, result):
         vote = [vote for vote in self.votes if vote.voter_id == player_id][0]
         vote.result = result
+        db.session.commit()
 
         vote_complete = np.bitwise_and.reduce([vote.result is not None for vote in self.votes])
         mission = db.session.query(Player).filter(Player.id == player_id).first().game.current_mission()  # TODO: rewrite

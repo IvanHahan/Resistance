@@ -14,7 +14,7 @@ def on_join(username, game_id):
         db.session.add(player)
         db.session.commit()
         join_room(game_id)
-        emit('player_joined', username, room=game_id)
+        emit('player_joined', player.id, room=game_id)
 
 
 @socketio.on('leave_game')

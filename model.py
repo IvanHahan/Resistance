@@ -39,9 +39,6 @@ class Game(db.Model):
         db.session.commit()
         return mission
 
-    def _current_mission(self):
-        return self.missions[-1]
-
     def _complete_game(self):
         fail_missions = len([mission for mission in self.missions if mission.voting.result is False])
         success_missions = len([mission for mission in self.missions if mission.voting.result is True])
@@ -52,6 +49,9 @@ class Game(db.Model):
             self.resistance_won = True
             return True
         return False
+
+    def current_mission(self):
+        return self.missions[-1]
 
     def next_leader(self):
         if self._leader_idx == len(self.players) - 1:
@@ -122,20 +122,21 @@ class Mission(db.Model):
         db.session.commit()
 
     def _new_troop_proposal(self, player_ids):
-        players = db.session.query(Player).filter(Player.id.in_(player_ids)).first()
-        proposal = TroopProposal(players=players,
-                                 proposer=self.game.players[self.game.leader_idx],
-                                 mission=self)
-        voting = Voting(mission=self)
+        players = db.session.query(Player).filter(Player.id.in_(player_ids)).all()
+        voting = Voting()
         voting.votes = [Vote(voter=player) for player in players]
+        proposal = TroopProposal(members=players,
+                                 proposer=self.game.current_leader(),
+                                 mission=self,
+                                 voting=voting)
         db.session.add(proposal)
         db.session.add(voting)
         db.session.commit()
         return proposal
 
     def next(self, *args):
-        self._set_status(RoundStage(self.status.value + 1))
-        self.update(args)
+        self._set_status(RoundStage(self._stage.value + 1))
+        self.update(*args)
 
     def update(self, *args):
         if self._stage == RoundStage.proposal_request:
@@ -143,8 +144,10 @@ class Mission(db.Model):
 
         elif self._stage == RoundStage.troop_proposal:
             player_ids = args[0]
-            self._new_troop_proposal(player_ids)
-            emit('start_voting', [player.id for player in self.game.players], room=self.game.id)
+            proposal = self._new_troop_proposal(player_ids)
+            emit('start_voting', {'voting_id': proposal.voting_id,
+                                  'candidates': player_ids,
+                                  'voters': [player.id for player in self.game.players]}, room=self.game.id)
 
         elif self._stage == RoundStage.troop_voting:
             voting = self.troop_proposals[-1].voting
@@ -215,8 +218,8 @@ class Voting(db.Model):
         vote = [vote for vote in self.votes if vote.voter_id == player_id][0]
         vote.result = result
 
-        vote_complete = np.bitwise_or.reduce([vote.result is None for vote in self.votes]) is False
-        mission = db.query(Player).filter(Player.id == player_id).first().game.current_mission()  # TODO: rewrite
+        vote_complete = np.bitwise_and.reduce([vote.result is not None for vote in self.votes])
+        mission = db.session.query(Player).filter(Player.id == player_id).first().game.current_mission()  # TODO: rewrite
         if vote_complete:
             mission.next()
         else:

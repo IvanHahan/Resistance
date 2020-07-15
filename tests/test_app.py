@@ -40,18 +40,21 @@ class TestGame(TestCase):
             received = client.get_received()
 
         host_client.emit('start_game', host_id)
-
+        proposer_client = None
+        mission_id = None
         for client, id in zip([host_client, *clients], [host_id, *player_ids]):
             received = client.get_received()
-            leader_id = received[0]['args'][0]
+            leader_id, mission = received[0]['args']
             if leader_id == id:
-                client.emit('make_proposal', (1, 2))
-            print(received)
+                mission_id = mission['id']
+                proposer_client = client
+
+        proposer_client.emit('make_proposal', mission_id, (1, 2))
 
         for client, id in zip([host_client, *clients], [host_id, *player_ids]):
             received = client.get_received()
-            voters, voting_id = received[0]['args']
-            if id in voters:
-                client.emit('vote', voting_id)
+            data = received[0]['args'][0]
+            if id in data['voters']:
+                client.emit('vote', {'voting_id': data['voting_id'], 'result': True, 'voter_id': id})
 
 

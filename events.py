@@ -56,9 +56,13 @@ def on_proposal(mission_id, players_ids):
 
 
 @socketio.on('vote')
-def on_vote(voting_id, player_id, result):
+def on_vote(info):
+    result = info['result']
+    voting_id = info['voting_id']
+    voter_id = info['voter_id']
+
     voting = db.session.query(model.Voting) \
         .filter(model.Voting.id == voting_id).first()
     if voting is not None:
-        voting.vote(player_id, result)
+        voting.vote(voter_id, result)
 

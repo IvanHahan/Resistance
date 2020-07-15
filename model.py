@@ -111,6 +111,7 @@ class Mission(db.Model):
 
     voting_id = db.Column(db.Integer, db.ForeignKey('votings.id'), nullable=True)
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
+    num_of_fails = db.Column(db.Integer, default=1, nullable=False)
 
     voting = db.relationship('Voting', uselist=False, foreign_keys=[voting_id], cascade='all, delete-orphan', single_parent=True)
     troop_proposals = db.relationship('TroopProposal', uselist=True, cascade='all, delete-orphan')
@@ -162,7 +163,7 @@ class Mission(db.Model):
 
         elif self._stage == RoundStage.mission_voting:
             voting = self.voting
-            voting.result = np.bitwise_and.reduce([vote.result for vote in voting.votes])
+            voting.result = np.bitwise_not([vote.result for vote in voting.votes]).sum() >= self.num_of_fails
             self.next()
         elif self._stage == RoundStage.mission_results:
             self.game.next()

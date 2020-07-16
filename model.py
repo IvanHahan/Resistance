@@ -30,7 +30,7 @@ class Game(db.Model):
     missions = db.relationship('Mission', back_populates='game', cascade='all, delete-orphan')
 
     def _set_status(self, status):
-        self.status = status
+        self._status = status
         db.session.commit()
 
     def _new_mission(self):
@@ -65,12 +65,12 @@ class Game(db.Model):
         return self.players[self._leader_idx]
 
     def update(self):
-        if self.status == GameStatus.pending:
+        if self._status == GameStatus.pending:
             self.next()
-        if self.status == GameStatus.start_mission:
+        if self._status == GameStatus.start_mission:
             mission = self._new_mission()
             mission.update()
-        if self.status == GameStatus.end_mission:
+        if self._status == GameStatus.end_mission:
             if self._complete_game():
                 self.next()
                 emit('game_complete', self.resistance_won)
@@ -155,19 +155,23 @@ class Mission(db.Model):
             voting.result = sum([v.result for v in voting.votes]) > len(voting.votes) // 2
             if voting.result:
                 self.troop_members = self.troop_proposals[-1].members
+                self.voting = Voting()
+                self.voting.votes = [Vote(voter=player) for player in self.troop_members]
+                db.session.add(self.voting)
                 db.session.commit()
-                emit('start_voting', [player.id for player in self.troop_members], room=self.game.id)
+                emit('start_voting', {'voters': [player.id for player in self.troop_members],
+                                      'voting_id': self.voting_id}, room=self.game.id)
             else:
                 self._set_status(RoundStage.proposal_request)
                 self.update()
 
         elif self._stage == RoundStage.mission_voting:
             voting = self.voting
-            voting.result = np.bitwise_not([vote.result for vote in voting.votes]).sum() >= self.num_of_fails
+            voting.result = np.bitwise_not([vote.result for vote in voting.votes]).sum() < self.num_of_fails
             self.next()
         elif self._stage == RoundStage.mission_results:
-            self.game.next()
             emit('mission_complete', self.voting.result, room=self.game.id)
+            self.game.next()
 
     def to_dict(self):
         return {

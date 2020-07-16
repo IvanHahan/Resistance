@@ -59,4 +59,6 @@ class TestGame(TestCase):
 
         for client, id in zip([host_client, *clients], [host_id, *player_ids]):
             received = client.get_received()
-            print(received)
+            data = received[0]['args'][0]
+            if id in data['voters']:
+                client.emit('vote', {'voting_id': data['voting_id'], 'result': True, 'voter_id': id})

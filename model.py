@@ -3,7 +3,8 @@ import enum
 import numpy as np
 from flask_socketio import emit
 
-from app import db
+from app import db, rules
+import errors
 
 
 class GameStatus(enum.Enum):
@@ -19,7 +20,6 @@ class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     _status = db.Column(db.Enum(GameStatus), default=GameStatus.pending, nullable=False)
     resistance_won = db.Column(db.Boolean, nullable=True)
-    missions_to_win = db.Column(db.Integer, default=1, nullable=False) #todo: change to 3
     _leader_idx = db.Column(db.Integer, nullable=False, default=-1)
 
     host_id = db.Column(db.Integer, db.ForeignKey('players.id', use_alter=True, name='fk_host_id'), nullable=True)
@@ -42,10 +42,11 @@ class Game(db.Model):
     def _complete_game(self):
         fail_missions = len([mission for mission in self.missions if mission.voting.result is False])
         success_missions = len([mission for mission in self.missions if mission.voting.result is True])
-        if fail_missions == self.missions_to_win:
+        missions_to_win = rules[len(self.players)]['missions_to_win']
+        if fail_missions == missions_to_win:
             self.resistance_won = False
             return True
-        elif success_missions == self.missions_to_win:
+        elif success_missions == missions_to_win:
             self.resistance_won = True
             return True
         return False
@@ -66,11 +67,17 @@ class Game(db.Model):
 
     def update(self):
         if self._status == GameStatus.pending:
+            spies_idx = np.random.randint(0, len(self.players), rules[len(self.players)]['spies'])
+            for i in range(self.players):
+                if i in spies_idx:
+                    self.players[i].role = Role.spy
+                else:
+                    self.players[i].role = Role.resistance
             self.next()
-        if self._status == GameStatus.start_mission:
+        elif self._status == GameStatus.start_mission:
             mission = self._new_mission()
             mission.update()
-        if self._status == GameStatus.end_mission:
+        elif self._status == GameStatus.end_mission:
             if self._complete_game():
                 self.next()
                 emit('game_complete', self.resistance_won)
@@ -113,7 +120,8 @@ class Mission(db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
     num_of_fails = db.Column(db.Integer, default=1, nullable=False)
 
-    voting = db.relationship('Voting', uselist=False, foreign_keys=[voting_id], cascade='all, delete-orphan', single_parent=True)
+    voting = db.relationship('Voting', uselist=False, foreign_keys=[voting_id], cascade='all, delete-orphan',
+                             single_parent=True)
     troop_proposals = db.relationship('TroopProposal', uselist=True, cascade='all, delete-orphan')
     troop_members = db.relationship('Player', uselist=True, secondary=player_mission_association)
     game = db.relationship('Game', uselist=False, foreign_keys=[game_id], back_populates='missions')
@@ -145,6 +153,9 @@ class Mission(db.Model):
 
         elif self._stage == RoundStage.troop_proposal:
             player_ids = args[0]
+            target_players = rules[len(self.game.players)]['mission_team'][len(self.game.missions) - 1]
+            if len(player_ids) != target_players:
+                raise errors.InvalidPlayersNumber(len(player_ids), target_players)
             proposal = self._new_troop_proposal(player_ids)
             emit('start_voting', {'voting_id': proposal.voting_id,
                                   'candidates': player_ids,
@@ -225,7 +236,8 @@ class Voting(db.Model):
         db.session.commit()
 
         vote_complete = np.bitwise_and.reduce([vote.result is not None for vote in self.votes])
-        mission = db.session.query(Player).filter(Player.id == player_id).first().game.current_mission()  # TODO: rewrite
+        mission = db.session.query(Player).filter(
+            Player.id == player_id).first().game.current_mission()  # TODO: rewrite
         if vote_complete:
             mission.next()
         else:

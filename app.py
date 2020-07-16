@@ -25,7 +25,7 @@ def create_app(config='config.Debug'):
         db.drop_all()
         db.create_all()
 
-    with open("rules.yml", 'r') as stream:
+    with open(app.config['RULES_PATH'], 'r') as stream:
         rules = yaml.safe_load(stream)
 
     import events

@@ -65,6 +65,9 @@ class Game(db.Model):
     def current_mission(self):
         return self.missions[-1]
 
+    def current_voting(self):
+        return self.missions[-1].current_voting()
+
     def next_leader(self):
         if self._leader_idx == len(self.players) - 1:
             self._leader_idx = 0
@@ -94,6 +97,17 @@ class Game(db.Model):
     def next(self):
         self._set_status(GameStatus(self._status.value + 1))
         self.update()
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'status': self._status,
+            'resistance_won': self.resistance_won,
+            'leader_index': self._leader_idx,
+            'host_id': self.host_id,
+            'players': [player.to_dict() for player in self.players],
+            'missions': [mission.to_dict() for mission in self.missions]
+        }
 
 
 class RoundStage(enum.Enum):
@@ -128,7 +142,8 @@ class Mission(db.Model):
 
     voting = db.relationship('Voting', uselist=False, foreign_keys=[voting_id], cascade='all, delete-orphan',
                              single_parent=True)
-    troop_proposals = db.relationship('TroopProposal', uselist=True, cascade='all, delete-orphan')
+    troop_proposals = db.relationship('TroopProposal', uselist=True, cascade='all, delete-orphan',
+                                      order_by='TroopProposal.id')
     troop_members = db.relationship('Player', uselist=True, secondary=player_mission_association)
     game = db.relationship('Game', uselist=False, foreign_keys=[game_id], back_populates='missions')
 
@@ -193,10 +208,20 @@ class Mission(db.Model):
             emit('mission_complete', self.voting.result, room=self.game.id)
             self.game.next()
 
+    def current_voting(self):
+        if self._stage == RoundStage.troop_proposal:
+            return self.troop_proposals[-1].voting
+        elif self._stage == RoundStage.troop_voting:
+            return self.voting
+
     def to_dict(self):
         return {
             'id': self.id,
             'stage': self._stage,
+            'members_ids': [m.id for m in self.troop_members],
+            'proposals': [p.to_dict() for p in self.troop_proposals],
+            'game_id': self.game_id,
+            'voting': self.voting.to_dict() if self.voting is not None else None,
         }
 
 
@@ -215,6 +240,13 @@ class Player(db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey('games.id', name='fk_game_id'), nullable=False)
     game = db.relationship('Game', uselist=False, back_populates='players', foreign_keys=[game_id])
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'role': self.role,
+            'game_id': self.game_id
+        }
+
 
 class TroopProposal(db.Model):
     __tablename__ = 'troop_proposals'
@@ -229,6 +261,15 @@ class TroopProposal(db.Model):
     proposer = db.relationship('Player', uselist=False)
     voting = db.relationship('Voting', uselist=False, cascade='all, delete-orphan', single_parent=True)
     mission = db.relationship('Mission', uselist=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'proposer_id': self.proposer_id,
+            'voting': self.voting.to_dict() if self.voting is not None else None,
+            'mission_id': self.mission_id,
+            'members_ids': [m.id for m in self.members],
+        }
 
 
 class Voting(db.Model):
@@ -252,6 +293,13 @@ class Voting(db.Model):
         else:
             return
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'result': self.result,
+            'votes': [v.to_dict() for v in self.votes],
+        }
+
 
 class Vote(db.Model):
     __tablename__ = 'votes'
@@ -264,3 +312,11 @@ class Vote(db.Model):
 
     voter = db.relationship('Player', uselist=False)
     voting = db.relationship('Voting', uselist=False, back_populates='votes')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'result': self.result,
+            'voter_id': self.voter_id,
+            'voting_id': self.voting_id,
+        }

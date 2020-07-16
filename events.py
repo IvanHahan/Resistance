@@ -51,8 +51,8 @@ def on_create_game(username):
 def on_proposal(info):
     game_id = info['game_id']
     players_ids = info['players_id']
-    mission = db.session.query(model.Game) \
-        .filter(model.Game.id == game_id).first().missions[-1]
+    mission = db.session.query(model.Game.missions) \
+        .filter(model.Game.id == game_id).first()[-1]
     if mission is not None:
         mission.next(players_ids)
 

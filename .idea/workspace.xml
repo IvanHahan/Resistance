@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="237c5862-05fd-4826-8547-d26a07fc07aa" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/events.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -184,7 +184,7 @@
       <workItem from="1594649753730" duration="12320000" />
       <workItem from="1594747026504" duration="7699000" />
       <workItem from="1594817360641" duration="3372000" />
-      <workItem from="1594918590556" duration="7312000" />
+      <workItem from="1594918590556" duration="7640000" />
     </task>
     <task id="LOCAL-00001" summary="initial">
       <created>1591384700596</created>
@@ -333,7 +333,14 @@
       <option name="project" value="LOCAL" />
       <updated>1594924423625</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="add converting to json">
+      <created>1594926169554</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1594926169554</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -358,7 +365,8 @@
     <MESSAGE value="change rules" />
     <MESSAGE value="add rules compliance" />
     <MESSAGE value="add minor changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="add minor changes" />
+    <MESSAGE value="add converting to json" />
+    <option name="LAST_COMMIT_MESSAGE" value="add converting to json" />
   </component>
   <component name="WindowStateProjectService">
     <state x="320" y="115" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594643802321">
@@ -373,10 +381,10 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="408" y="193" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1440.900@0.0.1440.900" timestamp="1591526910804" />
-    <state x="303" y="52" key="CommitChangelistDialog2" timestamp="1594924423362">
+    <state x="303" y="52" key="CommitChangelistDialog2" timestamp="1594926169322">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="303" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1594924423362" />
+    <state x="303" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1594926169322" />
     <state x="100" y="100" width="1240" height="700" key="DiffContextDialog" timestamp="1594665505265">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -429,14 +437,14 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="221" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1591379506587" />
-    <state width="500" height="445" key="SwitcherDM" timestamp="1594925045228">
+    <state width="500" height="445" key="SwitcherDM" timestamp="1594926274918">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1594925045228" />
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1594924425129">
+    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1594926274918" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1594926171046">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1594924425129" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1594926171046" />
     <state x="269" y="193" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1594646481312">
       <screen x="0" y="0" width="1440" height="900" />
     </state>

@@ -1,0 +1,60 @@
+5:
+  missions_to_win: 3
+  spies: 2
+  resistance: 3
+  mission_team:
+    - 2
+    - 3
+    - 2
+    - 3
+    - 3
+6:
+  missions_to_win: 3
+  spies: 2
+  resistance: 4
+  mission_team:
+    - 2
+    - 3
+    - 4
+    - 3
+    - 4
+7:
+  missions_to_win: 3
+  spies: 3
+  resistance: 4
+  mission_team:
+    - 2
+    - 3
+    - 3
+    - 4
+    - 4
+8:
+  missions_to_win: 3
+  spies: 3
+  resistance: 5
+  mission_team:
+    - 3
+    - 4
+    - 4
+    - 5
+    - 5
+9:
+  missions_to_win: 3
+  spies: 3
+  resistance: 6
+  mission_team:
+    - 3
+    - 4
+    - 4
+    - 5
+    - 5
+10:
+  missions_to_win: 3
+  spies: 4
+  resistance: 6
+  mission_team:
+    - 3
+    - 4
+    - 4
+    - 5
+    - 5

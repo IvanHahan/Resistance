@@ -3,12 +3,16 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, emit, send, join_room, leave_room
+import yaml
 
 db = SQLAlchemy()
 socketio = SocketIO()
+rules = None
 
 
 def create_app(config='config.Debug'):
+
+    global rules
 
     app = Flask(__name__)
     app.config.from_object(config)
@@ -20,6 +24,9 @@ def create_app(config='config.Debug'):
 
         db.drop_all()
         db.create_all()
+
+    with open("rules.yml", 'r') as stream:
+        rules = yaml.safe_load(stream)
 
     import events
     import model

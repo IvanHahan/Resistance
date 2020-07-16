@@ -1,0 +1,7 @@
+3:
+  missions_to_win: 1
+  spies: 1
+  resistance: 2
+  mission_team:
+    - 1
+    - 2

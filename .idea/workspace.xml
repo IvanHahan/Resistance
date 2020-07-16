@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="237c5862-05fd-4826-8547-d26a07fc07aa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/errors.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/events.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -189,7 +186,7 @@
       <workItem from="1594649753730" duration="12320000" />
       <workItem from="1594747026504" duration="7699000" />
       <workItem from="1594817360641" duration="3372000" />
-      <workItem from="1594918590556" duration="5007000" />
+      <workItem from="1594918590556" duration="5645000" />
     </task>
     <task id="LOCAL-00001" summary="initial">
       <created>1591384700596</created>
@@ -324,7 +321,14 @@
       <option name="project" value="LOCAL" />
       <updated>1594921767735</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="add rules compliance">
+      <created>1594923662412</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1594923662412</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -347,7 +351,8 @@
     <MESSAGE value="fix vote for mission" />
     <MESSAGE value="add rules.yml" />
     <MESSAGE value="change rules" />
-    <option name="LAST_COMMIT_MESSAGE" value="change rules" />
+    <MESSAGE value="add rules compliance" />
+    <option name="LAST_COMMIT_MESSAGE" value="add rules compliance" />
   </component>
   <component name="WindowStateProjectService">
     <state x="320" y="115" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594643802321">
@@ -362,10 +367,10 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="408" y="193" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1440.900@0.0.1440.900" timestamp="1591526910804" />
-    <state x="303" y="52" key="CommitChangelistDialog2" timestamp="1594921767487">
+    <state x="303" y="52" key="CommitChangelistDialog2" timestamp="1594923662086">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="303" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1594921767487" />
+    <state x="303" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1594923662086" />
     <state x="100" y="100" width="1240" height="700" key="DiffContextDialog" timestamp="1594665505265">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -418,14 +423,14 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="221" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1591379506587" />
-    <state width="500" height="445" key="SwitcherDM" timestamp="1594923445670">
+    <state width="500" height="445" key="SwitcherDM" timestamp="1594924374974">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1594923445670" />
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1594921768922">
+    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1594924374974" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1594923663974">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1594921768922" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1594923663974" />
     <state x="269" y="193" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1594646481312">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -445,7 +450,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model.py</url>
-          <line>184</line>
+          <line>193</line>
           <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

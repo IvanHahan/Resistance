@@ -27,7 +27,9 @@ class Game(db.Model):
     host = db.relationship('Player', uselist=False, foreign_keys=[host_id], post_update=True)
     players = db.relationship('Player', uselist=True, back_populates='game', cascade='all, delete-orphan',
                               foreign_keys='[Player.game_id]')
-    missions = db.relationship('Mission', back_populates='game', cascade='all, delete-orphan')
+    missions = db.relationship('Mission', back_populates='game',
+                               cascade='all, delete-orphan',
+                               order_by='Mission.id')
 
     def _set_status(self, status):
         self._status = status
@@ -38,6 +40,15 @@ class Game(db.Model):
         db.session.add(mission)
         db.session.commit()
         return mission
+
+    def _setup(self):
+        spies_idx = np.random.randint(0, len(self.players), rules[len(self.players)]['spies'])
+        for i in range(self.players):
+            if i in spies_idx:
+                self.players[i].role = Role.spy
+            else:
+                self.players[i].role = Role.resistance
+        db.session.commit()
 
     def _complete_game(self):
         fail_missions = len([mission for mission in self.missions if mission.voting.result is False])
@@ -67,12 +78,7 @@ class Game(db.Model):
 
     def update(self):
         if self._status == GameStatus.pending:
-            spies_idx = np.random.randint(0, len(self.players), rules[len(self.players)]['spies'])
-            for i in range(self.players):
-                if i in spies_idx:
-                    self.players[i].role = Role.spy
-                else:
-                    self.players[i].role = Role.resistance
+            self._setup()
             self.next()
         elif self._status == GameStatus.start_mission:
             mission = self._new_mission()
@@ -149,7 +155,10 @@ class Mission(db.Model):
 
     def update(self, *args):
         if self._stage == RoundStage.proposal_request:
-            emit('query_proposal', (self.game.next_leader().id, self.to_dict()), room=self.game.id)
+            target_players = rules[len(self.game.players)]['mission_team'][len(self.game.missions) - 1]
+            emit('query_proposal', {'leader_id': self.game.next_leader().id,
+                                    'target_players': target_players},
+                 room=self.game.id)
 
         elif self._stage == RoundStage.troop_proposal:
             player_ids = args[0]

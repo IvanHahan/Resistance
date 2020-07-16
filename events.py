@@ -1,4 +1,4 @@
-from flask_socketio import send, join_room, leave_room, rooms, emit
+from flask_socketio import send, join_room, leave_room, emit
 
 from app import socketio
 from app import db
@@ -48,9 +48,11 @@ def on_create_game(username):
 
 
 @socketio.on('make_proposal')
-def on_proposal(mission_id, players_ids):
-    mission = db.session.query(model.Mission) \
-        .filter(model.Mission.id == mission_id).first()
+def on_proposal(info):
+    game_id = info['game_id']
+    players_ids = info['players_id']
+    mission = db.session.query(model.Game) \
+        .filter(model.Game.id == game_id).first().missions[-1]
     if mission is not None:
         mission.next(players_ids)
 

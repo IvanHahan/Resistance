@@ -3,7 +3,8 @@ import enum
 import numpy as np
 from flask_socketio import emit
 
-from app import db, rules
+from app import db
+import app
 import errors
 
 
@@ -42,7 +43,7 @@ class Game(db.Model):
         return mission
 
     def _setup(self):
-        spies_idx = np.random.randint(0, len(self.players), rules[len(self.players)]['spies'])
+        spies_idx = np.random.randint(0, len(self.players), app.rules[len(self.players)]['spies'])
         for i in range(self.players):
             if i in spies_idx:
                 self.players[i].role = Role.spy
@@ -53,7 +54,7 @@ class Game(db.Model):
     def _complete_game(self):
         fail_missions = len([mission for mission in self.missions if mission.voting.result is False])
         success_missions = len([mission for mission in self.missions if mission.voting.result is True])
-        missions_to_win = rules[len(self.players)]['missions_to_win']
+        missions_to_win = app.rules[len(self.players)]['missions_to_win']
         if fail_missions == missions_to_win:
             self.resistance_won = False
             return True
@@ -89,7 +90,7 @@ class Game(db.Model):
         elif self._status == GameStatus.end_mission:
             if self._complete_game():
                 self.next()
-                emit('game_complete', self.resistance_won)
+                emit('game_complete', self.resistance_won, room=self.id)
             else:
                 self._set_status(GameStatus.start_mission)
                 self.update()
@@ -98,16 +99,18 @@ class Game(db.Model):
         self._set_status(GameStatus(self._status.value + 1))
         self.update()
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_details=True):
+        obj = {
             'id': self.id,
             'status': self._status,
             'resistance_won': self.resistance_won,
             'leader_index': self._leader_idx,
-            'host_id': self.host_id,
-            'players': [player.to_dict() for player in self.players],
-            'missions': [mission.to_dict() for mission in self.missions]
+            'host_id': self.host_id
         }
+        if include_details:
+            obj['players'] = [player.to_dict() for player in self.players]
+            obj['missions'] = [mission.to_dict() for mission in self.missions]
+        return obj
 
 
 class RoundStage(enum.Enum):
@@ -170,14 +173,14 @@ class Mission(db.Model):
 
     def update(self, *args):
         if self._stage == RoundStage.proposal_request:
-            target_players = rules[len(self.game.players)]['mission_team'][len(self.game.missions) - 1]
+            target_players = app.rules[len(self.game.players)]['mission_team'][len(self.game.missions) - 1]
             emit('query_proposal', {'leader_id': self.game.next_leader().id,
                                     'target_players': target_players},
                  room=self.game.id)
 
         elif self._stage == RoundStage.troop_proposal:
             player_ids = args[0]
-            target_players = rules[len(self.game.players)]['mission_team'][len(self.game.missions) - 1]
+            target_players = app.rules[len(self.game.players)]['mission_team'][len(self.game.missions) - 1]
             if len(player_ids) != target_players:
                 raise errors.InvalidPlayersNumber(len(player_ids), target_players)
             proposal = self._new_troop_proposal(player_ids)

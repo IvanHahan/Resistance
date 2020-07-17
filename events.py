@@ -1,8 +1,14 @@
 from flask_socketio import send, join_room, leave_room, emit
 
-from app import socketio
-from app import db
 import model
+from app import db
+from app import socketio
+
+
+@socketio.on('connect')
+def connect():
+    games = db.session.query(model.Game).filter(model.Game._status == model.GameStatus.pending).all()
+    send([g.to_dict(include_details=False) for g in games])
 
 
 @socketio.on('join_game')
@@ -14,15 +20,18 @@ def on_join(username, game_id):
         db.session.add(player)
         db.session.commit()
         join_room(game_id)
-        emit('player_joined', game.to_dict(), room=game_id)
+        emit('player_joined', player.to_dict(), room=game_id)
+    else:
+        send('the game is full')
 
 
 @socketio.on('leave_game')
 def on_leave(player_id, game_id):
     db.session.query(model.Player).filter(model.Player.id == player_id).delete()
     db.session.commit()
+    game = db.session.query(model.Game).filter(model.Game.id == game_id).first()
     leave_room(game_id)
-    send(str(player_id) + ' has left the game.', room=game_id)
+    emit('player_left', game.to_dict(), room=game_id)
 
 
 @socketio.on('start_game')
@@ -50,8 +59,8 @@ def on_create_game(username):
 def on_proposal(info):
     game_id = info['game_id']
     players_ids = info['players_id']
-    mission = db.session.query(model.Game.missions) \
-        .filter(model.Game.id == game_id).first()[-1]
+    mission = db.session.query(model.Mission) \
+        .filter(model.Mission.game_id == game_id).order_by(db.desc(model.Mission.id)).first()
     if mission is not None:
         mission.next(players_ids)
 

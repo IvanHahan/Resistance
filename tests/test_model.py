@@ -18,7 +18,7 @@ class TestModel(TestCase):
         with self.app.app_context():
             game = model.Game()
             player1 = model.Player(name='1', game=game)
-            playe2 = model.Player(name='2', game=game)
+            player2 = model.Player(name='2', game=game)
             game.host = player1
             db.session.add(game)
             db.session.commit()
@@ -34,4 +34,8 @@ class TestModel(TestCase):
             game.host = player1
             db.session.add(game)
             db.session.commit()
+            game.update()
             game.next()
+            assert player1.role is not None
+            assert player2.role is not None
+            assert player3.role is not None

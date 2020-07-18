@@ -41,7 +41,7 @@ class Game(db.Model):
 
     def _setup(self):
         spies_idx = np.random.randint(0, len(self.players), app.rules[len(self.players)]['spies'])
-        for i in range(self.players):
+        for i in range(len(self.players)):
             if i in spies_idx:
                 self.players[i].role = Role.spy
             else:
@@ -77,8 +77,15 @@ class Game(db.Model):
     def current_leader(self):
         return self.players[self._leader_idx]
 
-    def update(self):
+    def next(self):
+        if len(self.players) not in app.rules.keys():
+            raise errors.InsufficientPlayersNumber(len(self.players), min(app.rules.keys()))
+        if self.paused:
+            return actions.game_paused(self.id)
+        self._set_status(GameStatus(self.status.value + 1))
+        self.update()
 
+    def update(self):
         if self.status == GameStatus.pending:
             return
 
@@ -96,19 +103,11 @@ class Game(db.Model):
             if action == actions.mission_complete:
                 if self._complete_game():
                     self.next()
-                    yield [action, actions.game_complete(self.id, self.resistance_won)]
+                    return [action, actions.game_complete(self.id, self.resistance_won)]
                 else:
                     self._set_status(GameStatus.start_mission)
                     return [action, self.update()]
             return [action]
-
-    def next(self):
-        if len(self.players) not in app.rules.keys():
-            raise errors.InsufficientPlayersNumber(len(self.players), min(app.rules.keys()))
-        if self.paused:
-            return actions.game_paused(self.id)
-        self._set_status(GameStatus(self.status.value + 1))
-        self.update()
 
     def to_dict(self, include_details=True):
         obj = {

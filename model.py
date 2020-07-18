@@ -9,10 +9,10 @@ import errors
 
 
 class GameStatus(enum.Enum):
-    pending = 0
-    start_mission = 1
-    end_mission = 2
-    finished = 3
+    pending = 1
+    start_mission = 2
+    end_mission = 3
+    finished = 4
 
 
 class Game(db.Model):
@@ -20,6 +20,7 @@ class Game(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     _status = db.Column(db.Enum(GameStatus), default=GameStatus.pending, nullable=False)
+    _paused = db.Column(db.Boolean, default=False, nullable=False)
     resistance_won = db.Column(db.Boolean, nullable=True)
     _leader_idx = db.Column(db.Integer, nullable=False, default=-1)
 
@@ -64,7 +65,7 @@ class Game(db.Model):
         return False
 
     def current_mission(self):
-        return self.missions[-1]
+        return self.missions[-1] if len(self.missions) > 0 else None
 
     def current_voting(self):
         return self.missions[-1].current_voting()
@@ -81,12 +82,18 @@ class Game(db.Model):
         return self.players[self._leader_idx]
 
     def update(self):
+        if self._paused:
+            emit('game_paused', room=self.id)
+            return
         if self._status == GameStatus.pending:
             self._setup()
             self.next()
         elif self._status == GameStatus.start_mission:
-            mission = self._new_mission()
-            mission.update()
+            if self.current_mission() is not None and self.current_mission().stage != RoundStage.mission_results:
+                self.current_mission().update()
+            else:
+                mission = self._new_mission()
+                mission.update()
         elif self._status == GameStatus.end_mission:
             if self._complete_game():
                 self.next()
@@ -96,6 +103,9 @@ class Game(db.Model):
                 self.update()
 
     def next(self):
+        if self._paused:
+            emit('game_paused', room=self.id)
+            return
         self._set_status(GameStatus(self._status.value + 1))
         self.update()
 
@@ -111,6 +121,17 @@ class Game(db.Model):
             obj['players'] = [player.to_dict() for player in self.players]
             obj['missions'] = [mission.to_dict() for mission in self.missions]
         return obj
+
+    def pause(self):
+        self._paused = True
+        db.session.commit()
+        emit('game_paused', room=self.id)
+
+    def resume(self):
+        self._paused = False
+        db.session.commit()
+        emit('game_resumed', room=self.id)
+        self.update()
 
 
 class RoundStage(enum.Enum):

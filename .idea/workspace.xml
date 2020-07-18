@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="237c5862-05fd-4826-8547-d26a07fc07aa" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/tests/test_model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/events.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
@@ -187,7 +188,7 @@
       <workItem from="1594649753730" duration="12320000" />
       <workItem from="1594747026504" duration="7699000" />
       <workItem from="1594817360641" duration="3372000" />
-      <workItem from="1594918590556" duration="17061000" />
+      <workItem from="1594918590556" duration="19568000" />
     </task>
     <task id="LOCAL-00001" summary="initial">
       <created>1591384700596</created>
@@ -350,7 +351,14 @@
       <option name="project" value="LOCAL" />
       <updated>1594926318346</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="complete game flow">
+      <created>1594992345873</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1594992345873</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -376,7 +384,8 @@
     <MESSAGE value="add rules compliance" />
     <MESSAGE value="add minor changes" />
     <MESSAGE value="add converting to json" />
-    <option name="LAST_COMMIT_MESSAGE" value="add converting to json" />
+    <MESSAGE value="complete game flow" />
+    <option name="LAST_COMMIT_MESSAGE" value="complete game flow" />
   </component>
   <component name="WindowStateProjectService">
     <state x="320" y="115" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594643802321">
@@ -391,33 +400,33 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="408" y="193" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1440.900@0.0.1440.900" timestamp="1591526910804" />
-    <state x="303" y="52" key="CommitChangelistDialog2" timestamp="1594926318158">
+    <state x="303" y="52" key="CommitChangelistDialog2" timestamp="1594992345258">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="303" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1594926318158" />
+    <state x="303" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1594992345258" />
     <state x="100" y="100" width="1240" height="700" key="DiffContextDialog" timestamp="1594665505265">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="100" y="100" width="1240" height="700" key="DiffContextDialog/0.0.1440.900@0.0.1440.900" timestamp="1594665505265" />
-    <state width="1398" height="211" key="GridCell.Tab.0.bottom" timestamp="1594992260959">
+    <state width="1398" height="246" key="GridCell.Tab.0.bottom" timestamp="1595051741352">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="211" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1594992260959" />
+    <state width="1398" height="246" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1595051741352" />
     <state width="1398" height="207" key="GridCell.Tab.0.bottom/0.23.1440.812@0.23.1440.812" timestamp="1591616517460" />
-    <state width="1398" height="211" key="GridCell.Tab.0.center" timestamp="1594992260957">
+    <state width="1398" height="246" key="GridCell.Tab.0.center" timestamp="1595051741351">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="211" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1594992260957" />
+    <state width="1398" height="246" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1595051741351" />
     <state width="1398" height="207" key="GridCell.Tab.0.center/0.23.1440.812@0.23.1440.812" timestamp="1591616517459" />
-    <state width="1398" height="211" key="GridCell.Tab.0.left" timestamp="1594992260955">
+    <state width="1398" height="246" key="GridCell.Tab.0.left" timestamp="1595051741350">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="211" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1594992260955" />
+    <state width="1398" height="246" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1595051741350" />
     <state width="1398" height="207" key="GridCell.Tab.0.left/0.23.1440.812@0.23.1440.812" timestamp="1591616517458" />
-    <state width="1398" height="211" key="GridCell.Tab.0.right" timestamp="1594992260958">
+    <state width="1398" height="246" key="GridCell.Tab.0.right" timestamp="1595051741351">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="211" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1594992260958" />
+    <state width="1398" height="246" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1595051741351" />
     <state width="1398" height="207" key="GridCell.Tab.0.right/0.23.1440.812@0.23.1440.812" timestamp="1591616517459" />
     <state width="1398" height="211" key="GridCell.Tab.1.bottom" timestamp="1594992260961">
       <screen x="0" y="0" width="1440" height="900" />
@@ -447,15 +456,15 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="221" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1591379506587" />
-    <state width="500" height="445" key="SwitcherDM" timestamp="1594992174189">
+    <state width="500" height="445" key="SwitcherDM" timestamp="1595051936040">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1594992174189" />
+    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1595051936040" />
     <state width="500" height="445" key="SwitcherDM/0.23.1440.812@0.23.1440.812" timestamp="1594988709032" />
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1594926319947">
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1594992347392">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1594926319947" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1594992347392" />
     <state x="269" y="193" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1594646481312">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -498,6 +507,6 @@
     <SUITE FILE_PATH="coverage/Resistance$test_connection.coverage" NAME="test_connection Coverage Results" MODIFIED="1594648854421" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_app_TestGame.coverage" NAME="Unittests for test_app.TestGame Coverage Results" MODIFIED="1594484762793" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Resistance$app.coverage" NAME="app Coverage Results" MODIFIED="1594648840807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_app_TestGame_test_simulate_game.coverage" NAME="Unittests for test_app.TestGame.test_simulate_game Coverage Results" MODIFIED="1594992260885" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_app_TestGame_test_simulate_game.coverage" NAME="Unittests for test_app.TestGame.test_simulate_game Coverage Results" MODIFIED="1595051741340" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
   </component>
 </project>

@@ -12,17 +12,23 @@ def connect():
 
 
 @socketio.on('join_game')
-def on_join(username, game_id):
+def on_join(info):
+    game_id = info['game_id']
+    username = info['username']
     game = db.session.query(model.Game).filter(model.Game.id == game_id).first()
-    if game.players is None or len(game.players) < 10:
-        player = model.Player(name=username)
-        player.game = game
-        db.session.add(player)
-        db.session.commit()
+    if db.session.query(model.Player).filter(db.and_(model.Player.game_id == game_id,
+                                                     model.Player.id == info.get('player_id', -1))).exists():
         join_room(game_id)
-        emit('player_joined', player.to_dict(), room=game_id)
     else:
-        send('the game is full')
+        if game.players is None or len(game.players) < 10:
+            player = model.Player(name=username)
+            player.game = game
+            db.session.add(player)
+            db.session.commit()
+            join_room(game_id)
+            emit('player_joined', player.to_dict(), room=game_id)
+        else:
+            send('the game is full')
 
 
 @socketio.on('leave_game')

@@ -3,7 +3,7 @@ from unittest import TestCase
 from app import create_app, socketio, db
 import app
 # from flask import current_app as app
-import model
+from model import model
 
 
 class TestGame(TestCase):

@@ -7,7 +7,7 @@ from app import socketio
 
 @socketio.on('connect')
 def connect():
-    games = db.session.query(model.Game).filter(model.Game._status == model.GameStatus.pending).all()
+    games = db.session.query(model.Game).filter(model.Game.status == model.GameStatus.pending).all()
     send([g.to_dict(include_details=False) for g in games])
 
 
@@ -45,7 +45,8 @@ def on_start(player_id):
     game = db.session.query(model.Game) \
         .filter(model.Game.host_id == player_id).first()
     if game is not None:
-        game.next()
+        for action in game.next():
+            action()
 
 
 @socketio.on('create_game')
@@ -65,10 +66,11 @@ def on_create_game(username):
 def on_proposal(info):
     game_id = info['game_id']
     players_ids = info['players_id']
-    mission = db.session.query(model.Mission) \
-        .filter(model.Mission.game_id == game_id).order_by(db.desc(model.Mission.id)).first()
+    mission = db.session.query(model.Game) \
+        .filter(model.Game.id == game_id).first()
     if mission is not None:
-        mission.next(players_ids)
+        for action in mission.next(players_ids):
+            action()
 
 
 @socketio.on('vote')

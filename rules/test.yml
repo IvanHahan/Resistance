@@ -5,3 +5,6 @@
   mission_team:
     - 1
     - 2
+  fails_num:
+    - 1
+    - 1

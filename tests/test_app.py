@@ -6,7 +6,7 @@ import app
 from model import model
 
 
-class TestGame(TestCase):
+class TestApp(TestCase):
 
     def setUp(self):
         self.app = create_app('config.Test')

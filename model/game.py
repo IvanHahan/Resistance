@@ -81,9 +81,9 @@ class Game(db.Model):
         if len(self.players) not in app.rules.keys():
             raise errors.InsufficientPlayersNumber(len(self.players), min(app.rules.keys()))
         if self.paused:
-            return actions.game_paused(self.id)
+            return actions.GamePaused(self.id)
         self._set_status(GameStatus(self.status.value + 1))
-        self.update()
+        return self.update()
 
     def update(self):
         if self.status == GameStatus.pending:
@@ -91,19 +91,19 @@ class Game(db.Model):
 
         elif self.status == GameStatus.starting:
             self._setup()
-            self.next()
+            return self.next()
 
         elif self.status == GameStatus.start_mission:
             _ = self._new_mission()
-            self.next()
+            return self.next()
 
         elif self.status == GameStatus.executing_mission:
 
             action = self.current_mission().update()
-            if action == actions.mission_complete:
+            if action == actions.MissionComplete:
                 if self._complete_game():
                     self.next()
-                    return [action, actions.game_complete(self.id, self.resistance_won)]
+                    return [action, actions.GameComplete(self.id, self.resistance_won)]
                 else:
                     self._set_status(GameStatus.start_mission)
                     return [action, self.update()]
@@ -125,7 +125,7 @@ class Game(db.Model):
     def pause(self):
         self.paused = True
         db.session.commit()
-        return actions.game_paused(self.id)
+        return actions.GamePaused(self.id)
 
     def resume(self):
         if self.status == GameStatus.pending:

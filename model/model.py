@@ -83,7 +83,7 @@ class Voting(db.Model):
         mission = db.session.query(Player).filter(
             Player.id == player_id).first().game.current_mission()  # TODO: rewrite
         if vote_complete:
-            mission.next()
+            return mission.next()
         else:
             return
 

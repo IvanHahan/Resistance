@@ -46,12 +46,12 @@ class Mission(db.Model):
 
     def next(self, *args):
         self._set_status(RoundStage(self._stage.value + 1))
-        self.update(*args)
+        return self.update(*args)
 
     def update(self, *args):
         if self._stage == RoundStage.proposal_request:
             target_players = app.rules[len(self.game.players)]['mission_team'][len(self.game.missions) - 1]
-            return actions.query_proposal(self.game_id, self.game.next_leader().id, target_players)
+            return actions.QueryProposal(self.game_id, self.game.next_leader().id, target_players)
 
         elif self._stage == RoundStage.troop_proposal:
             player_ids = args[0]
@@ -59,8 +59,8 @@ class Mission(db.Model):
             if len(player_ids) != target_players:
                 raise errors.InvalidPlayersNumber(len(player_ids), target_players)
             proposal = self._new_troop_proposal(player_ids)
-            return actions.start_voting(self.game_id, proposal.voting_id, player_ids,
-                                        [player.id for player in self.game.players])
+            return actions.StartVoting(self.game_id, proposal.voting_id, player_ids,
+                                       [player.id for player in self.game.players])
 
         elif self._stage == RoundStage.troop_voting:
             voting = self.troop_proposals[-1].voting
@@ -71,20 +71,20 @@ class Mission(db.Model):
                 self.voting.votes = [Vote(voter=player) for player in self.troop_members]
                 db.session.add(self.voting)
                 db.session.commit()
-                return actions.start_voting(self.game_id, self.voting_id, None,
-                                            [player.id for player in self.troop_members])
+                return actions.StartVoting(self.game_id, self.voting_id, None,
+                                           [player.id for player in self.troop_members])
 
             else:
                 self._set_status(RoundStage.proposal_request)
-                self.update()
+                return self.update()
 
         elif self._stage == RoundStage.mission_voting:
             voting = self.voting
             voting.result = np.bitwise_not([vote.result for vote in voting.votes]).sum() < self.num_of_fails
-            self.next()
+            return self.next()
 
         elif self._stage == RoundStage.mission_results:
-            return actions.mission_complete(self.game_id, self.voting.result)
+            return actions.MissionComplete(self.game_id, self.voting.result)
 
     def current_voting(self):
         if self._stage == RoundStage.troop_proposal:

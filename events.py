@@ -46,7 +46,7 @@ def on_start(player_id):
         .filter(model.Game.host_id == player_id).first()
     if game is not None:
         for action in game.next():
-            action()
+            action.execute()
 
 
 @socketio.on('create_game')
@@ -70,7 +70,7 @@ def on_proposal(info):
         .filter(model.Game.id == game_id).first()
     if mission is not None:
         for action in mission.next(players_ids):
-            action()
+            action.execute()
 
 
 @socketio.on('vote')
@@ -82,5 +82,7 @@ def on_vote(info):
     voting = db.session.query(model.Voting) \
         .filter(model.Voting.id == voting_id).first()
     if voting is not None:
-        voting.vote(voter_id, result)
+        action = voting.vote(voter_id, result)
+        if action is not None:
+            action.execute()
 

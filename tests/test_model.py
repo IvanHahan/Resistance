@@ -24,7 +24,7 @@ class TestGameStart(TestCase):
             db.session.add(game)
             db.session.commit()
             with self.assertRaises(errors.InsufficientPlayersNumber):
-                game.next()
+                game.update()
 
     def test_game_start_sufficient_players(self):
         with self.app.app_context():
@@ -35,6 +35,7 @@ class TestGameStart(TestCase):
             game.host = player1
             db.session.add(game)
             db.session.commit()
+            game.update()
             self.assertTrue(player1.role is not None)
             self.assertTrue(player2.role is not None)
             self.assertTrue(player3.role is not None)
@@ -60,30 +61,25 @@ class TestGameMiddle(TestCase):
     def test_game_failed_troop_voting(self):
         with self.app.app_context():
             game = db.session.query(model.Game).filter(model.Game.id == self.game_id).first()
-            actions_ = game.next()
+            actions_ = game.update()
             self.assertTrue(isinstance(actions_[0], actions.QueryProposal))
             self.assertTrue(game.status == model.GameStatus.executing_mission)
-            action = game.current_mission().next((1,))
-            self.assertTrue(isinstance(action, actions.StartVoting))
-            voting = game.current_mission().troop_proposals[-1].voting
+            actions_ = game.update(model.RoundStage.troop_proposal, players_ids=(1,))
+            self.assertTrue(isinstance(actions_[0], actions.StartVoting))
             for p in game.players:
-                action = voting.vote(p.id, False)
-            self.assertTrue(action is not None)
-            self.assertTrue(isinstance(action, actions.QueryProposal))
+                actions_ = game.update(model.RoundStage.troop_voting, result=False, player_id=p.id)
+            self.assertTrue(isinstance(actions_[0], actions.QueryProposal))
             self.assertTrue(game._leader_idx == 1)
 
     def test_game_pause(self):
         with self.app.app_context():
             game = db.session.query(model.Game).filter(model.Game.id == self.game_id).first()
-            actions_ = game.next()
+            actions_ = game.update()
             self.assertTrue(isinstance(actions_[0], actions.QueryProposal))
             self.assertTrue(game.status == model.GameStatus.executing_mission)
-            action = game.current_mission().next((1,))
-            self.assertTrue(isinstance(action, actions.StartVoting))
+            actions_ = game.update(model.RoundStage.troop_proposal, players_ids=(1,))
+            self.assertTrue(isinstance(actions_[0], actions.StartVoting))
             game.pause()
-            voting = game.current_mission().troop_proposals[-1].voting
             for p in game.players:
-                action = voting.vote(p.id, False)
-            self.assertTrue(action is not None)
-            self.assertTrue(isinstance(action, actions.QueryProposal))
-            self.assertTrue(game._leader_idx == 1)
+                actions_ = game.update(model.RoundStage.troop_voting, result=False, player_id=p.id)
+                self.assertTrue(isinstance(actions_[0], actions.GamePaused))

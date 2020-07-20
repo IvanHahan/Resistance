@@ -75,7 +75,7 @@ class Game(db.Model):
     def current_leader(self):
         return self.players[self._leader_idx]
 
-    def update(self, mission_state, **kwargs):
+    def update(self, mission_state=None, **kwargs):
         return self.update_for_state(self.status, mission_state, **kwargs)
 
     def update_for_state(self, state, mission_state=None, **kwargs):
@@ -83,7 +83,7 @@ class Game(db.Model):
         if len(self.players) not in app.rules.keys():
             raise errors.InsufficientPlayersNumber(len(self.players), min(app.rules.keys()))
         if self.paused:
-            return actions.GamePaused(self.id)
+            return [actions.GamePaused(self.id)]
 
         self._set_status(state)
         if self.status == GameStatus.pending:

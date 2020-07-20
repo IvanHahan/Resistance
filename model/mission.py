@@ -47,7 +47,7 @@ class Mission(db.Model):
         return proposal
 
     def update(self, **kwargs):
-        self.update_for_state(self._stage, **kwargs)
+        return self.update_for_state(self._stage, **kwargs)
 
     def update_for_state(self, state, **kwargs):
         self._set_status(state)
@@ -104,9 +104,9 @@ class Mission(db.Model):
             return actions.MissionComplete(self.game_id, self.voting.result)
 
     def current_voting(self):
-        if self._stage == RoundStage.troop_proposal:
+        if self._stage == RoundStage.troop_voting:
             return self.troop_proposals[-1].voting
-        elif self._stage == RoundStage.troop_voting_results:
+        elif self._stage == RoundStage.mission_voting:
             return self.voting
 
     def to_dict(self):

@@ -27,7 +27,7 @@ class TestApp(TestCase):
 
         player_ids = []
         for i, client in enumerate(clients):
-            client.emit('join_game', str(i), 1)
+            client.emit('join_game', {'username': str(i), 'game_id': 1})
             received = client.get_received()
             assert received[1]['name'] == 'player_joined'
             player_ids.append(received[1]['args'][0]['id'])

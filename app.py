@@ -27,6 +27,7 @@ def create_app(config='config.Debug'):
         rules = yaml.safe_load(stream)
 
     import model
+    import events
 
     return app
 

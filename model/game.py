@@ -1,5 +1,3 @@
-import errors
-import socket_actions as actions
 from .mission import *
 
 
@@ -77,36 +75,39 @@ class Game(db.Model):
     def current_leader(self):
         return self.players[self._leader_idx]
 
-    def next(self):
+    def update(self, mission_state, **kwargs):
+        return self.update_for_state(self.status, mission_state, **kwargs)
+
+    def update_for_state(self, state, mission_state=None, **kwargs):
+
         if len(self.players) not in app.rules.keys():
             raise errors.InsufficientPlayersNumber(len(self.players), min(app.rules.keys()))
         if self.paused:
             return actions.GamePaused(self.id)
-        self._set_status(GameStatus(self.status.value + 1))
-        return self.update()
 
-    def update(self):
+        self._set_status(state)
         if self.status == GameStatus.pending:
-            return
+            return self.update_for_state(GameStatus.starting)
 
         elif self.status == GameStatus.starting:
             self._setup()
-            return self.next()
+            return self.update_for_state(GameStatus.start_mission)
 
         elif self.status == GameStatus.start_mission:
             _ = self._new_mission()
-            return self.next()
+            return self.update_for_state(GameStatus.executing_mission)
 
         elif self.status == GameStatus.executing_mission:
-
-            action = self.current_mission().update()
-            if action == actions.MissionComplete:
+            if mission_state:
+                action = self.current_mission().update_for_state(mission_state, **kwargs)
+            else:
+                action = self.current_mission().update()
+            if isinstance(action, actions.MissionComplete):
                 if self._complete_game():
-                    self.next()
+                    self.update_for_state(GameStatus.finished)
                     return [action, actions.GameComplete(self.id, self.resistance_won)]
                 else:
-                    self._set_status(GameStatus.start_mission)
-                    return [action, self.update()]
+                    return [action, self.update_for_state(GameStatus.start_mission)]
             return [action]
 
     def to_dict(self, include_details=True):

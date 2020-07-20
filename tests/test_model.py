@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import errors
 import model
-import socket_actions as actions
+from callbacks import socket_actions as actions
 from app import create_app, db
 
 
@@ -65,6 +65,22 @@ class TestGameMiddle(TestCase):
             self.assertTrue(game.status == model.GameStatus.executing_mission)
             action = game.current_mission().next((1,))
             self.assertTrue(isinstance(action, actions.StartVoting))
+            voting = game.current_mission().troop_proposals[-1].voting
+            for p in game.players:
+                action = voting.vote(p.id, False)
+            self.assertTrue(action is not None)
+            self.assertTrue(isinstance(action, actions.QueryProposal))
+            self.assertTrue(game._leader_idx == 1)
+
+    def test_game_pause(self):
+        with self.app.app_context():
+            game = db.session.query(model.Game).filter(model.Game.id == self.game_id).first()
+            actions_ = game.next()
+            self.assertTrue(isinstance(actions_[0], actions.QueryProposal))
+            self.assertTrue(game.status == model.GameStatus.executing_mission)
+            action = game.current_mission().next((1,))
+            self.assertTrue(isinstance(action, actions.StartVoting))
+            game.pause()
             voting = game.current_mission().troop_proposals[-1].voting
             for p in game.players:
                 action = voting.vote(p.id, False)

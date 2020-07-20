@@ -2,18 +2,24 @@ class GameError(Exception):
     pass
 
 
-class InvalidPlayersNumber(Exception):
+class InvalidPlayersNumber(GameError):
 
     def __init__(self, value, target):
         super().__init__(f'Invalid Players number {value}. Must be {target}')
 
 
-class InsufficientPlayersNumber(Exception):
+class VoteNotFound(GameError):
+
+    def __init__(self):
+        super().__init__(f'Vote or player not found')
+
+
+class InsufficientPlayersNumber(GameError):
 
     def __init__(self, value, target):
         super().__init__(f'Insufficient players number {value}. Minimum is {target}')
 
 
-class GameNotStarted(Exception):
+class GameNotStarted(GameError):
     def __init__(self):
         super().__init__(f'Game not started')

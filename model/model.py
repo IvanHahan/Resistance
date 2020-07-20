@@ -74,18 +74,13 @@ class Voting(db.Model):
 
     votes = db.relationship('Vote', uselist=True, back_populates='voting', cascade='all, delete-orphan')
 
+    def is_complete(self):
+        return np.bitwise_and.reduce([vote.result is not None for vote in self.votes])
+
     def vote(self, player_id, result):
         vote = [vote for vote in self.votes if vote.voter_id == player_id][0]
         vote.result = result
         db.session.commit()
-
-        vote_complete = np.bitwise_and.reduce([vote.result is not None for vote in self.votes])
-        mission = db.session.query(Player).filter(
-            Player.id == player_id).first().game.current_mission()  # TODO: rewrite
-        if vote_complete:
-            return mission.next()
-        else:
-            return
 
     def to_dict(self):
         return {

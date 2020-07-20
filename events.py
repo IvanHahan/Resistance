@@ -73,16 +73,30 @@ def on_proposal(info):
             action.execute()
 
 
-@socketio.on('vote')
-def on_vote(info):
+@socketio.on('troop_vote')
+def on_troop_vote(info):
     result = info['result']
-    voting_id = info['voting_id']
+    game_id = info['game_id']
     voter_id = info['voter_id']
 
-    voting = db.session.query(model.Voting) \
-        .filter(model.Voting.id == voting_id).first()
-    if voting is not None:
-        action = voting.vote(voter_id, result)
+    game = db.session.query(model.Game) \
+        .filter(model.Game.id == game_id).first()
+    if game is not None:
+        action = game.update(model.RoundStage.troop_voting, result=result, player_id=voter_id)
+        if action is not None:
+            action.execute()
+
+
+@socketio.on('mission_vote')
+def on_troop_vote(info):
+    result = info['result']
+    game_id = info['game_id']
+    voter_id = info['voter_id']
+
+    game = db.session.query(model.Game) \
+        .filter(model.Game.id == game_id).first()
+    if game is not None:
+        action = game.update(model.RoundStage.mission_voting, result=result, player_id=voter_id)
         if action is not None:
             action.execute()
 

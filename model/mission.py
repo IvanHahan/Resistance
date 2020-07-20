@@ -50,6 +50,7 @@ class Mission(db.Model):
         return self.update_for_state(self._stage, **kwargs)
 
     def update_for_state(self, state, **kwargs):
+
         self._set_status(state)
         if self._stage == RoundStage.proposal_request:
             target_players = app.rules[len(self.game.players)]['mission_team'][len(self.game.missions) - 1]
@@ -94,7 +95,7 @@ class Mission(db.Model):
                 raise errors.VoteNotFound()
             self.current_voting().vote(kwargs['player_id'], kwargs['result'])
             if self.current_voting().is_complete():
-                return self.update_for_state(RoundStage.troop_voting_results)
+                return self.update_for_state(RoundStage.mission_voting_result)
         elif self._stage == RoundStage.mission_voting_result:
             voting = self.voting
             voting.result = np.bitwise_not([vote.result for vote in voting.votes]).sum() < self.num_of_fails

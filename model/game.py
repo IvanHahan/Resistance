@@ -134,4 +134,3 @@ class Game(db.Model):
 
         self.paused = False
         db.session.commit()
-        self.update()

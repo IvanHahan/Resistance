@@ -71,7 +71,7 @@ class TestGameMiddle(TestCase):
             self.assertTrue(isinstance(actions_[0], actions.QueryProposal))
             self.assertTrue(game._leader_idx == 1)
 
-    def test_game_pause(self):
+    def test_game_pause_resume_failed_troop_voting(self):
         with self.app.app_context():
             game = db.session.query(model.Game).filter(model.Game.id == self.game_id).first()
             actions_ = game.update()
@@ -83,3 +83,22 @@ class TestGameMiddle(TestCase):
             for p in game.players:
                 actions_ = game.update(model.RoundStage.troop_voting, result=False, player_id=p.id)
                 self.assertTrue(isinstance(actions_[0], actions.GamePaused))
+            game.resume()
+            for p in game.players:
+                actions_ = game.update(model.RoundStage.troop_voting, result=False, player_id=p.id)
+            self.assertTrue(isinstance(actions_[0], actions.QueryProposal))
+
+    def test_simulate_game_success(self):
+        with self.app.app_context():
+            game = db.session.query(model.Game).filter(model.Game.id == self.game_id).first()
+            actions_ = game.update()
+            self.assertTrue(isinstance(actions_[0], actions.QueryProposal))
+            self.assertTrue(game.status == model.GameStatus.executing_mission)
+            actions_ = game.update(model.RoundStage.troop_proposal, players_ids=(1,))
+            self.assertTrue(isinstance(actions_[0], actions.StartVoting))
+            for p in game.players:
+                actions_ = game.update(model.RoundStage.troop_voting, result=True, player_id=p.id)
+            self.assertTrue(isinstance(actions_[0], actions.StartVoting))
+            actions_ = game.update(model.RoundStage.mission_voting, result=True, player_id=game.players[0].id)
+            self.assertTrue(isinstance(actions_[0], actions.MissionComplete))
+            self.assertTrue(game.resistance_won is not None)

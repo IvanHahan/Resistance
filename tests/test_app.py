@@ -1,9 +1,9 @@
 from unittest import TestCase
 
-from app import create_app, socketio, db
 import app
 # from flask import current_app as app
-from model import model
+import model
+from app import create_app, socketio, db
 
 
 class TestApp(TestCase):
@@ -46,12 +46,12 @@ class TestApp(TestCase):
             received = client.get_received()
             data = received[0]['args'][0]
             if data['leader_id'] == id:
-                target_players = data['target_players']
+                target_players = data['troop_size']
                 assert target_players == app.rules[3]['mission_team'][0]
                 assert id == host_id
                 proposer_client = client
 
-        proposer_client.emit('make_proposal', {'game_id': game_id, 'players_id': (1, )})
+        proposer_client.emit('make_proposal', {'game_id': game_id, 'players_id': (1,)})
 
         for client, id in zip([host_client, *clients], [host_id, *player_ids]):
             received = client.get_received()
@@ -69,4 +69,3 @@ class TestApp(TestCase):
 
         received = host_client.get_received()
         assert len([t for t in received if t['name'] == 'game_complete']) == 1
-

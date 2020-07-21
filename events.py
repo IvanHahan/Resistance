@@ -16,8 +16,8 @@ def on_join(info):
     game_id = info['game_id']
     username = info['username']
     game = db.session.query(model.Game).filter(model.Game.id == game_id).first()
-    if db.session.query(model.Player).filter(db.and_(model.Player.game_id == game_id,
-                                                     model.Player.id == info.get('player_id', -1))).exists():
+    if db.session.query(model.Player.id).filter(db.and_(model.Player.game_id == game_id,
+                                                     model.Player.id == info.get('player_id', -1))).first() is not None:
         join_room(game_id)
     else:
         if game.players is None or len(game.players) < 10:
@@ -45,7 +45,7 @@ def on_start(player_id):
     game = db.session.query(model.Game) \
         .filter(model.Game.host_id == player_id).first()
     if game is not None:
-        for action in game.next():
+        for action in game.update():
             action.execute()
 
 
@@ -66,10 +66,10 @@ def on_create_game(username):
 def on_proposal(info):
     game_id = info['game_id']
     players_ids = info['players_id']
-    mission = db.session.query(model.Game) \
+    game = db.session.query(model.Game) \
         .filter(model.Game.id == game_id).first()
-    if mission is not None:
-        for action in mission.next(players_ids):
+    if game is not None:
+        for action in game.update(mission_state=model.RoundStage.troop_proposal, players_ids=players_ids):
             action.execute()
 
 

@@ -108,7 +108,7 @@ class Game(db.Model):
                     return [action, actions.GameComplete(self.id, self.resistance_won)]
                 else:
                     return [action, self.update_for_state(GameStatus.start_mission)]
-            return [action]
+            return [action] if action is not None else []
 
     def to_dict(self, include_details=True):
         obj = {

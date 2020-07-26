@@ -2,9 +2,11 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 import yaml
+from flasgger import Swagger
 
 db = SQLAlchemy()
 socketio = SocketIO()
+swagger = Swagger()
 rules = None
 
 
@@ -17,6 +19,7 @@ def create_app(config='config.Debug'):
 
     db.init_app(app)
     socketio.init_app(app)
+    swagger.init_app(app)
 
     with app.app_context():
 

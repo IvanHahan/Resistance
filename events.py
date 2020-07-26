@@ -82,8 +82,8 @@ def on_troop_vote(info):
     game = db.session.query(model.Game) \
         .filter(model.Game.id == game_id).first()
     if game is not None:
-        action = game.update(model.RoundStage.troop_voting, result=result, player_id=voter_id)
-        if action is not None:
+        actions = game.update(model.RoundStage.troop_voting, result=result, player_id=voter_id)
+        for action in actions:
             action.execute()
 
 
@@ -96,7 +96,7 @@ def on_troop_vote(info):
     game = db.session.query(model.Game) \
         .filter(model.Game.id == game_id).first()
     if game is not None:
-        action = game.update(model.RoundStage.mission_voting, result=result, player_id=voter_id)
-        if action is not None:
+        actions = game.update(model.RoundStage.mission_voting, result=result, player_id=voter_id)
+        for action in actions:
             action.execute()
 

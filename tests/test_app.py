@@ -57,13 +57,13 @@ class TestApp(TestCase):
             received = client.get_received()
             data = received[0]['args'][0]
             if id in data['voters']:
-                client.emit('vote', {'voting_id': data['voting_id'], 'result': True, 'voter_id': id})
+                client.emit('troop_vote', {'game_id': game_id, 'result': True, 'voter_id': id})
 
         for client, id in zip([host_client, *clients], [host_id, *player_ids]):
             received = client.get_received()
             data = [t for t in received if t['name'] == 'start_voting'][0]['args'][0]
             if id in data['voters']:
-                client.emit('vote', {'voting_id': data['voting_id'], 'result': True, 'voter_id': id})
+                client.emit('mission_vote', {'game_id': game_id, 'result': True, 'voter_id': id})
             else:
                 assert len([t for t in received if t['name'] == 'game_complete']) == 1
 

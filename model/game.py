@@ -14,7 +14,6 @@ class Game(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     status = db.Column(db.Enum(GameStatus), default=GameStatus.pending, nullable=False)
-    paused = db.Column(db.Boolean, default=False, nullable=False)
     resistance_won = db.Column(db.Boolean, nullable=True)
     _leader_idx = db.Column(db.Integer, nullable=False, default=-1)
 
@@ -122,15 +121,3 @@ class Game(db.Model):
             obj['players'] = [player.to_dict() for player in self.players]
             obj['missions'] = [mission.to_dict() for mission in self.missions]
         return obj
-
-    def pause(self):
-        self.paused = True
-        db.session.commit()
-        return actions.GamePaused(self.id)
-
-    def resume(self):
-        if self.status == GameStatus.pending:
-            raise errors.GameNotStarted()
-
-        self.paused = False
-        db.session.commit()

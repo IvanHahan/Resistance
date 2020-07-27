@@ -9,22 +9,6 @@ class Callback:
         pass
 
 
-class GamePaused(Callback):
-    def __init__(self, game_id):
-        super().__init__(game_id)
-
-    def execute(self):
-        emit('game_paused', self.game_id, room=self.game_id)
-
-
-class GameResumed(Callback):
-    def __init__(self, game_id):
-        super().__init__(game_id)
-
-    def execute(self):
-        emit('game_resumed', self.game_id, room=self.game_id)
-
-
 class GameComplete(Callback):
     def __init__(self, game_id, result):
         super().__init__(game_id)
@@ -47,15 +31,13 @@ class QueryProposal(Callback):
 
 
 class StartVoting(Callback):
-    def __init__(self, game_id, voting_id, candidates, voters):
+    def __init__(self, game_id, candidates, voters):
         super().__init__(game_id)
-        self.voting_id = voting_id
         self.candidates = candidates
         self.voters = voters
 
     def execute(self):
-        emit('start_voting', {'voting_id': self.voting_id,
-                              'candidates': self.candidates,
+        emit('start_voting', {'candidates': self.candidates,
                               'voters': self.voters}, room=self.game_id)
 
 

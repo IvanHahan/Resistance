@@ -67,7 +67,7 @@ class Mission(db.Model):
                 raise errors.InvalidPlayersNumber(len(player_ids), target_players)
 
             proposal = self._new_troop_proposal(player_ids)
-            return actions.StartVoting(self.game_id, proposal.voting_id, player_ids,
+            return actions.StartVoting(self.game_id, player_ids,
                                        [player.id for player in self.game.players])
 
         elif self._stage == RoundStage.troop_voting:
@@ -85,7 +85,7 @@ class Mission(db.Model):
                 self.voting.votes = [Vote(voter=player) for player in self.troop_members]
                 db.session.add(self.voting)
                 db.session.commit()
-                return actions.StartVoting(self.game_id, self.voting_id, None,
+                return actions.StartVoting(self.game_id, None,
                                            [player.id for player in self.troop_members])
 
             else:

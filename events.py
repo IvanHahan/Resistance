@@ -32,7 +32,9 @@ def on_join(info):
 
 
 @socketio.on('leave_game')
-def on_leave(player_id, game_id):
+def on_leave(info):
+    player_id = info['player_id']
+    game_id = info['game_id']
     db.session.query(model.Player).filter(model.Player.id == player_id).delete()
     db.session.commit()
     game = db.session.query(model.Game).filter(model.Game.id == game_id).first()
@@ -59,7 +61,7 @@ def on_create_game(username):
     db.session.add(player)
     db.session.commit()
     join_room(game.id)
-    emit('game_created', game.to_dict())
+    emit('game_created', game.to_dict(), broadcast=True)
 
 
 @socketio.on('make_proposal')

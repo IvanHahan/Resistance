@@ -18,9 +18,8 @@ class TestGameStart(TestCase):
     def test_game_start_insufficient_players(self):
         with self.app.app_context():
             game = model.Game()
-            player1 = model.Player(name='1', game=game)
-            player2 = model.Player(name='2', game=game)
-            game.host = player1
+            game.add_player('1', True)
+            game.add_player('2')
             db.session.add(game)
             db.session.commit()
             with self.assertRaises(errors.InsufficientPlayersNumber):
@@ -29,16 +28,15 @@ class TestGameStart(TestCase):
     def test_game_start_sufficient_players(self):
         with self.app.app_context():
             game = model.Game()
-            player1 = model.Player(name='1', game=game)
-            player2 = model.Player(name='2', game=game)
-            player3 = model.Player(name='3', game=game)
-            game.host = player1
+            p1 = game.add_player('1', True)
+            p2 = game.add_player('2')
+            p3 = game.add_player('3')
             db.session.add(game)
             db.session.commit()
             game.update()
-            self.assertTrue(player1.role is not None)
-            self.assertTrue(player2.role is not None)
-            self.assertTrue(player3.role is not None)
+            self.assertTrue(p1.role is not None)
+            self.assertTrue(p2.role is not None)
+            self.assertTrue(p3.role is not None)
 
 
 class TestGameMiddle(TestCase):
@@ -46,10 +44,9 @@ class TestGameMiddle(TestCase):
         self.app = create_app('config.Test')
         with self.app.app_context():
             game = model.Game()
-            player1 = model.Player(name='1', game=game)
-            player2 = model.Player(name='2', game=game)
-            player3 = model.Player(name='3', game=game)
-            game.host = player1
+            p1 = game.add_player('1', True)
+            p2 = game.add_player('2')
+            p3 = game.add_player('3')
             db.session.add(game)
             db.session.commit()
             self.game_id = game.id

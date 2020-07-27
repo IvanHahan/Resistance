@@ -1,5 +1,5 @@
-from .model import *
 from callbacks import socket_actions as actions
+from .model import *
 
 
 class RoundStage(enum.Enum):
@@ -72,7 +72,9 @@ class Mission(db.Model):
 
         elif self._stage == RoundStage.troop_voting:
             if 'result' not in kwargs and 'player_id' not in kwargs:
-                raise errors.VoteNotFound()
+                return actions.StartVoting(self.game_id, [player.id for player in self.troop_proposals[-1].members],
+                                           [vote.voter_id for vote in self.current_voting().votes if
+                                            vote.result is None])
             self.current_voting().vote(kwargs['player_id'], kwargs['result'])
             if self.current_voting().is_complete():
                 return self.update_for_state(RoundStage.troop_voting_results)
@@ -92,7 +94,9 @@ class Mission(db.Model):
                 return self.update_for_state(RoundStage.proposal_request)
         elif self._stage == RoundStage.mission_voting:
             if 'result' not in kwargs and 'player_id' not in kwargs:
-                raise errors.VoteNotFound()
+                return actions.StartVoting(self.game_id, None,
+                                           [vote.voter_id for vote in self.current_voting().votes if
+                                            vote.result is None])
             self.current_voting().vote(kwargs['player_id'], kwargs['result'])
             if self.current_voting().is_complete():
                 return self.update_for_state(RoundStage.mission_voting_result)

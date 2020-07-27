@@ -38,4 +38,4 @@ def create_app(config='config.Debug'):
 if __name__ == '__main__':
 
     app = create_app()
-    socketio.run(app, host='localhost', port=5000)
+    socketio.run(app, host='192.168.0.102', port=5000)

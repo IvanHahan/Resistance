@@ -23,3 +23,13 @@ class InsufficientPlayersNumber(GameError):
 class GameNotStarted(GameError):
     def __init__(self):
         super().__init__(f'Game not started')
+
+
+class GameFull(GameError):
+    def __init__(self):
+        super().__init__(f'The game is full')
+
+
+class UknownPlayer(GameError):
+    def __init__(self):
+        super().__init__(f'Unknown Player')

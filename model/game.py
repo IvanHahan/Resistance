@@ -1,7 +1,9 @@
+import app
+from app import db
 from .mission import *
 
 
-class GameStatus(enum.Enum):
+class GameStage(enum.Enum):
     pending = 0
     starting = 1
     start_mission = 2
@@ -9,11 +11,17 @@ class GameStatus(enum.Enum):
     finished = 4
 
 
+class GameStatus(enum.Enum):
+    pending = 0
+    in_progress = 1
+    finished = 2
+
+
 class Game(db.Model):
     __tablename__ = 'games'
 
     id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.Enum(GameStatus), default=GameStatus.pending, nullable=False)
+    stage = db.Column(db.Enum(GameStage), default=GameStage.pending, nullable=False)
     resistance_won = db.Column(db.Boolean, nullable=True)
     _leader_idx = db.Column(db.Integer, nullable=False, default=-1)
 
@@ -26,8 +34,16 @@ class Game(db.Model):
                                cascade='all, delete-orphan',
                                order_by='Mission.id')
 
-    def _set_status(self, status):
-        self.status = status
+    @property
+    def status(self):
+        if self.stage == GameStage.pending:
+            return GameStatus.pending
+        elif self.stage == GameStage.finished:
+            return GameStatus.finished
+        return GameStatus.in_progress
+
+    def _set_stage(self, status):
+        self.stage = status
         db.session.commit()
 
     def _new_mission(self):
@@ -72,7 +88,7 @@ class Game(db.Model):
         return leader
 
     def add_player(self, player_id, is_host=False):
-        if self.status != GameStatus.pending:
+        if self.stage != GameStage.pending:
             player = None
             for p in self.players:
                 if p.id == player_id:
@@ -80,7 +96,7 @@ class Game(db.Model):
             if player is not None:
                 raise errors.UknownPlayer()
             return player
-        elif (self.players is None or len(self.players) < 10) and self.status == GameStatus.pending:
+        elif (self.players is None or len(self.players) < 10) and self.stage == GameStage.pending:
             player = Player(name=player_id, game=self)
             if is_host:
                 self.host = player
@@ -91,7 +107,7 @@ class Game(db.Model):
             raise errors.GameFull()
 
     def remove_player(self, player_id):
-        if self.status == GameStatus.pending:
+        if self.stage == GameStage.pending:
             username = db.session.query(Player.name).filter(Player.id == player_id).first()
             db.session.query(Player).filter(Player.id == player_id).delete()
             db.session.commit()
@@ -101,44 +117,42 @@ class Game(db.Model):
         return self.players[self._leader_idx]
 
     def update(self, mission_state=None, **kwargs):
-        return self.update_for_state(self.status, mission_state, **kwargs)
+        return self.update_for_state(self.stage, mission_state, **kwargs)
 
     def update_for_state(self, state, mission_state=None, **kwargs):
 
         if len(self.players) not in app.rules.keys():
             raise errors.InsufficientPlayersNumber(len(self.players), min(app.rules.keys()))
-        if self.paused:
-            return [actions.GamePaused(self.id)]
 
-        self._set_status(state)
-        if self.status == GameStatus.pending:
-            return self.update_for_state(GameStatus.starting)
+        self._set_stage(state)
+        if self.stage == GameStage.pending:
+            return self.update_for_state(GameStage.starting)
 
-        elif self.status == GameStatus.starting:
+        elif self.stage == GameStage.starting:
             self._setup()
-            return self.update_for_state(GameStatus.start_mission)
+            return self.update_for_state(GameStage.start_mission)
 
-        elif self.status == GameStatus.start_mission:
+        elif self.stage == GameStage.start_mission:
             _ = self._new_mission()
-            return self.update_for_state(GameStatus.executing_mission)
+            return self.update_for_state(GameStage.executing_mission)
 
-        elif self.status == GameStatus.executing_mission:
+        elif self.stage == GameStage.executing_mission:
             if mission_state:
                 action = self.current_mission().update_for_state(mission_state, **kwargs)
             else:
                 action = self.current_mission().update()
             if isinstance(action, actions.MissionComplete):
                 if self._complete_game():
-                    self.update_for_state(GameStatus.finished)
-                    return [action, actions.GameComplete(self.id, self.resistance_won)]
+                    self.update_for_state(GameStage.finished)
+                    return [action, actions.GameComplete(self.id, self.resistance_won, self.status)]
                 else:
-                    return [action, self.update_for_state(GameStatus.start_mission)]
+                    return [action, self.update_for_state(GameStage.start_mission)]
             return [action] if action is not None else []
 
     def to_dict(self, include_details=True):
         obj = {
             'id': self.id,
-            'status': self.status,
+            'status': self.stage,
             'resistance_won': self.resistance_won,
             'leader_index': self._leader_idx,
             'host_id': self.host_id

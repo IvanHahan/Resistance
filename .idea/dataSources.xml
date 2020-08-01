@@ -7,5 +7,11 @@
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://localhost:5432/resistance_test</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="resistance@localhost" uuid="a5f67f9d-f8ec-42af-8894-070149efcadd">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/resistance</jdbc-url>
+    </data-source>
   </component>
 </project>

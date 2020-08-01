@@ -1,6 +1,7 @@
 from callbacks import socket_actions as actions
 from .model import *
-
+from app import db
+import app
 
 class RoundStage(enum.Enum):
     proposal_request = 1

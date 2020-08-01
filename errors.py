@@ -33,3 +33,8 @@ class GameFull(GameError):
 class UknownPlayer(GameError):
     def __init__(self):
         super().__init__(f'Unknown Player')
+
+
+class GameNotFound(GameError):
+    def __init__(self):
+        super().__init__(f'Game not found')

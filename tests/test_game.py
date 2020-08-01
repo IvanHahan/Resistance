@@ -60,7 +60,7 @@ class TestGameMiddle(TestCase):
             game = db.session.query(model.Game).filter(model.Game.id == self.game_id).first()
             actions_ = game.update()
             self.assertTrue(isinstance(actions_[0], actions.QueryProposal))
-            self.assertTrue(game.status == model.GameStatus.executing_mission)
+            self.assertTrue(game.status == model.GameStage.executing_mission)
             actions_ = game.update(model.RoundStage.troop_proposal, players_ids=(1,))
             self.assertTrue(isinstance(actions_[0], actions.StartVoting))
             for p in game.players:
@@ -73,7 +73,7 @@ class TestGameMiddle(TestCase):
             game = db.session.query(model.Game).filter(model.Game.id == self.game_id).first()
             actions_ = game.update()
             self.assertTrue(isinstance(actions_[0], actions.QueryProposal))
-            self.assertTrue(game.status == model.GameStatus.executing_mission)
+            self.assertTrue(game.status == model.GameStage.executing_mission)
             actions_ = game.update(model.RoundStage.troop_proposal, players_ids=(1,))
             self.assertTrue(isinstance(actions_[0], actions.StartVoting))
             game.pause()
@@ -90,7 +90,7 @@ class TestGameMiddle(TestCase):
             game = db.session.query(model.Game).filter(model.Game.id == self.game_id).first()
             actions_ = game.update()
             self.assertTrue(isinstance(actions_[0], actions.QueryProposal))
-            self.assertTrue(game.status == model.GameStatus.executing_mission)
+            self.assertTrue(game.status == model.GameStage.executing_mission)
             actions_ = game.update(model.RoundStage.troop_proposal, players_ids=(1,))
             self.assertTrue(isinstance(actions_[0], actions.StartVoting))
             for p in game.players:

@@ -10,12 +10,16 @@ class Callback:
 
 
 class GameComplete(Callback):
-    def __init__(self, game_id, result):
+    def __init__(self, game_id, result, status):
         super().__init__(game_id)
         self.result = result
+        self.status = status
 
     def execute(self):
-        emit('game_complete', self.result, room=self.game_id)
+        emit('game_status_changed', {'resistance_won': self.result,
+                                     'status': self.status.name}, room=self.game_id)
+
+        emit('game_status_changed', {'status': self.status.name}, namespace='/games')
 
 
 class QueryProposal(Callback):

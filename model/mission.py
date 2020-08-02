@@ -3,6 +3,7 @@ from .model import *
 from app import db
 import app
 
+
 class RoundStage(enum.Enum):
     proposal_request = 1
     troop_proposal = 2
@@ -30,6 +31,10 @@ class Mission(db.Model):
     troop_members = db.relationship('Player', uselist=True, secondary=player_mission_association)
     game = db.relationship('Game', uselist=False, foreign_keys=[game_id], back_populates='missions')
 
+    @property
+    def stage(self):
+        return self._stage
+
     def _set_status(self, status):
         self._stage = status
         db.session.commit()
@@ -55,7 +60,8 @@ class Mission(db.Model):
         self._set_status(state)
         if self._stage == RoundStage.proposal_request:
             target_players = app.rules[len(self.game.players)]['mission_team'][len(self.game.missions) - 1]
-            return actions.QueryProposal(self.game_id, self.game.next_leader().id, target_players)
+            return actions.MissionUpdated(self.game_id, self.to_dict())
+            # return actions.QueryProposal(self.game_id, self.game.next_leader().id, target_players)
 
         elif self._stage == RoundStage.troop_proposal:
             target_players = app.rules[len(self.game.players)]['mission_team'][len(self.game.missions) - 1]
@@ -68,14 +74,16 @@ class Mission(db.Model):
                 raise errors.InvalidPlayersNumber(len(player_ids), target_players)
 
             proposal = self._new_troop_proposal(player_ids)
-            return actions.StartVoting(self.game_id, player_ids,
-                                       [player.id for player in self.game.players])
+            return actions.MissionUpdated(self.game_id, self.to_dict())
+            # return actions.StartVoting(self.game_id, player_ids,
+            #                            [player.id for player in self.game.players])
 
         elif self._stage == RoundStage.troop_voting:
             if 'result' not in kwargs and 'player_id' not in kwargs:
-                return actions.StartVoting(self.game_id, [player.id for player in self.troop_proposals[-1].members],
-                                           [vote.voter_id for vote in self.current_voting().votes if
-                                            vote.result is None])
+                return actions.MissionUpdated(self.game_id, self.to_dict())
+                # return actions.StartVoting(self.game_id, [player.id for player in self.troop_proposals[-1].members],
+                #                            [vote.voter_id for vote in self.current_voting().votes if
+                #                             vote.result is None])
             self.current_voting().vote(kwargs['player_id'], kwargs['result'])
             if self.current_voting().is_complete():
                 return self.update_for_state(RoundStage.troop_voting_results)
@@ -88,16 +96,18 @@ class Mission(db.Model):
                 self.voting.votes = [Vote(voter=player) for player in self.troop_members]
                 db.session.add(self.voting)
                 db.session.commit()
-                return actions.StartVoting(self.game_id, None,
-                                           [player.id for player in self.troop_members])
+                return actions.MissionUpdated(self.game_id, self.to_dict())
+                # return actions.StartVoting(self.game_id, None,
+                #                            [player.id for player in self.troop_members])
 
             else:
                 return self.update_for_state(RoundStage.proposal_request)
         elif self._stage == RoundStage.mission_voting:
             if 'result' not in kwargs and 'player_id' not in kwargs:
-                return actions.StartVoting(self.game_id, None,
-                                           [vote.voter_id for vote in self.current_voting().votes if
-                                            vote.result is None])
+                return actions.MissionUpdated(self.game_id, self.to_dict())
+                # return actions.StartVoting(self.game_id, None,
+                #                            [vote.voter_id for vote in self.current_voting().votes if
+                #                             vote.result is None])
             self.current_voting().vote(kwargs['player_id'], kwargs['result'])
             if self.current_voting().is_complete():
                 return self.update_for_state(RoundStage.mission_voting_result)
@@ -107,7 +117,8 @@ class Mission(db.Model):
             return self.update_for_state(RoundStage.mission_results)
 
         elif self._stage == RoundStage.mission_results:
-            return actions.MissionComplete(self.game_id, self.voting.result)
+            return actions.MissionUpdated(self.game_id, self.to_dict())
+            # return actions.MissionComplete(self.game_id, self.voting.result)
 
     def current_voting(self):
         if self._stage == RoundStage.troop_voting:
@@ -118,7 +129,7 @@ class Mission(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'stage': self._stage,
+            'stage': self.stage.name,
             'members_ids': [m.id for m in self.troop_members],
             'proposals': [p.to_dict() for p in self.troop_proposals],
             'game_id': self.game_id,

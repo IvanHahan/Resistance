@@ -1,4 +1,5 @@
 from flask_socketio import emit
+import model
 
 
 class Callback:
@@ -9,17 +10,22 @@ class Callback:
         pass
 
 
-class GameComplete(Callback):
-    def __init__(self, game_id, result, status):
-        super().__init__(game_id)
-        self.result = result
-        self.status = status
+class GameUpdated(Callback):
+    def __init__(self, game_dict):
+        super().__init__(game_dict['id'])
+        self.game_dict = game_dict
 
     def execute(self):
-        emit('game_status_changed', {'resistance_won': self.result,
-                                     'status': self.status.name}, room=self.game_id)
+        emit('game_updated', self.game_dict, room=self.game_id)
 
-        emit('game_status_changed', {'status': self.status.name}, namespace='/games')
+
+class MissionUpdated(Callback):
+    def __init__(self, game_id, mission_dict):
+        super().__init__(game_id)
+        self.mission_dict = mission_dict
+
+    def execute(self):
+        emit('mission_updated', self.mission_dict, room=self.game_id)
 
 
 class QueryProposal(Callback):

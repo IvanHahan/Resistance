@@ -112,8 +112,12 @@ class Game(db.Model):
             db.session.query(Player).filter(Player.id == player_id).delete()
             db.session.commit()
             return username
+        else:
+            raise errors.UknownPlayer()
 
     def current_leader(self):
+        if self.stage == GameStage.pending:
+            raise errors.GameNotStarted()
         return self.players[self._leader_idx]
 
     def update(self, mission_state=None, **kwargs):
@@ -134,17 +138,18 @@ class Game(db.Model):
 
         elif self.stage == GameStage.start_mission:
             _ = self._new_mission()
-            return self.update_for_state(GameStage.executing_mission)
+            return [actions.GameUpdated(self.to_dict(include_details=False)),
+                    *self.update_for_state(GameStage.executing_mission)]
 
         elif self.stage == GameStage.executing_mission:
             if mission_state:
                 action = self.current_mission().update_for_state(mission_state, **kwargs)
             else:
                 action = self.current_mission().update()
-            if isinstance(action, actions.MissionComplete):
+            if self.current_mission().stage == RoundStage.mission_results:
                 if self._complete_game():
                     self.update_for_state(GameStage.finished)
-                    return [action, actions.GameComplete(self.id, self.resistance_won, self.status)]
+                    return [action, actions.GameUpdated(self.to_dict(include_details=False))]
                 else:
                     return [action, self.update_for_state(GameStage.start_mission)]
             return [action] if action is not None else []
@@ -152,10 +157,11 @@ class Game(db.Model):
     def to_dict(self, include_details=True):
         obj = {
             'id': self.id,
-            'status': self.stage,
+            'status': self.stage.name,
             'resistance_won': self.resistance_won,
             'leader_index': self._leader_idx,
-            'host_id': self.host_id
+            'host_id': self.host_id,
+            'host_name': self.host.name
         }
         if include_details:
             obj['players'] = [player.to_dict() for player in self.players]

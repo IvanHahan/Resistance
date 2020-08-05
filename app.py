@@ -15,6 +15,7 @@ def create_app(config='config.Debug'):
 
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'secret!'
+    app.config['SESSION_TYPE'] = 'filesystem'
     app.config.from_object(config)
 
     db.init_app(app)
@@ -28,7 +29,6 @@ def create_app(config='config.Debug'):
 
     with open(app.config['RULES_PATH'], 'r') as stream:
         rules = yaml.safe_load(stream)
-
 
     return app
 

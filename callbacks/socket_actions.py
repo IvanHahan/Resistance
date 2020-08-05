@@ -58,3 +58,8 @@ class MissionComplete(Callback):
 
     def execute(self):
         emit('mission_complete', self.result, room=self.game_id)
+
+
+class GameDeleted(Callback):
+    def execute(self):
+        emit('game_updated', 'Game deleted', room=self.game_id, namespace='/game')

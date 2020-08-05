@@ -1,4 +1,5 @@
 class GameError(Exception):
+    """Game error"""
     pass
 
 
@@ -38,3 +39,8 @@ class UknownPlayer(GameError):
 class GameNotFound(GameError):
     def __init__(self):
         super().__init__(f'Game not found')
+
+
+class ForbiddenAction(GameError):
+    def __init__(self):
+        super().__init__(f'You are not allowed to do that')

@@ -23,7 +23,7 @@ async def message(msg):
 
 
 async def start_server():
-    await sio.connect('http://178.165.89.10:5000',)
+    await sio.connect('http://178.165.89.10:5000', namespaces=['lobby'])
     await sio.wait()
 
 

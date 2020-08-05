@@ -26,19 +26,26 @@ class Role(enum.Enum):
 
 class Player(db.Model):
     __tablename__ = 'players'
+    __table_args__ = (
+        db.UniqueConstraint('name', 'game_id', name='unique_name_game'),
+        db.UniqueConstraint('sid', 'game_id', name='unique_sid_game'),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
+    sid = db.Column(db.String, nullable=False, unique=False)
     name = db.Column(db.String, nullable=False, unique=False)
     role = db.Column(db.Enum(Role), nullable=True)
 
-    game_id = db.Column(db.Integer, db.ForeignKey('games.id', name='fk_game_id'), nullable=False)
-    game = db.relationship('Game', uselist=False, back_populates='players', foreign_keys=[game_id])
+    game_id = db.Column(db.Integer, db.ForeignKey('games.id', name='fk_game_id', ondelete="cascade"), nullable=False)
+    game = db.relationship('Game', uselist=False, back_populates='players', foreign_keys=[game_id],
+                           cascade='all, delete-orphan', single_parent=True)
 
     def to_dict(self):
         return {
             'id': self.id,
             'role': self.role,
-            'game_id': self.game_id
+            'game_id': self.game_id,
+            'name': self.name
         }
 
 

@@ -34,6 +34,9 @@ class Game(db.Model):
                                cascade='all, delete-orphan',
                                order_by='Mission.id')
 
+    # @property
+    # def players(self):
+
     @property
     def status(self):
         if self.stage == GameStage.pending:
@@ -87,7 +90,7 @@ class Game(db.Model):
         leader = self.players[self._leader_idx]
         return leader
 
-    def add_player(self, player_id, is_host=False):
+    def add_player(self, player_id, sid, is_host=False):
         if self.stage != GameStage.pending:
             player = None
             for p in self.players:
@@ -95,9 +98,11 @@ class Game(db.Model):
                     player = p
             if player is not None:
                 raise errors.UknownPlayer()
+            player.sid = sid
+            db.session.commit()
             return player
         elif (self.players is None or len(self.players) < 10) and self.stage == GameStage.pending:
-            player = Player(name=player_id, game=self)
+            player = Player(name=player_id, sid=sid, game=self)
             if is_host:
                 self.host = player
             db.session.add(player)
@@ -108,7 +113,7 @@ class Game(db.Model):
 
     def remove_player(self, player_id):
         if self.stage == GameStage.pending:
-            username = db.session.query(Player.name).filter(Player.id == player_id).first()
+            username = db.session.query(Player.name).filter(Player.id == player_id).first()[0]
             db.session.query(Player).filter(Player.id == player_id).delete()
             db.session.commit()
             return username

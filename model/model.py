@@ -36,9 +36,8 @@ class Player(db.Model):
     name = db.Column(db.String, nullable=False, unique=False)
     role = db.Column(db.Enum(Role), nullable=True)
 
-    game_id = db.Column(db.Integer, db.ForeignKey('games.id', name='fk_game_id', ondelete="cascade"), nullable=False)
-    game = db.relationship('Game', uselist=False, back_populates='players', foreign_keys=[game_id],
-                           cascade='all, delete-orphan', single_parent=True)
+    game_id = db.Column(db.Integer, db.ForeignKey('games.id', name='fk_game_id', ondelete='cascade'), nullable=True)
+    game = db.relationship('Game', uselist=False, back_populates='players', foreign_keys=[game_id], single_parent=True)
 
     def to_dict(self):
         return {

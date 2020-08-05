@@ -5,10 +5,7 @@ import errors
 import model
 from app import db, socketio
 from flask import request
-from game_manager import GameManager
 
-
-game_manager = GameManager()
 
 def verify_player(player_id):
     if db.session.query(model.Player.sid).filter(db.and_(model.Player.id == player_id,

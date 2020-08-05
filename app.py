@@ -7,11 +7,11 @@ from flasgger import Swagger
 db = SQLAlchemy()
 socketio = SocketIO()
 swagger = Swagger()
-rules = None
+from game_manager import GameManager
+
+game_manager = GameManager()
 
 def create_app(config='config.Debug'):
-
-    global rules
 
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'secret!'
@@ -29,6 +29,7 @@ def create_app(config='config.Debug'):
 
     with open(app.config['RULES_PATH'], 'r') as stream:
         rules = yaml.safe_load(stream)
+        game_manager.configure(rules)
 
     return app
 
@@ -52,6 +53,7 @@ def create_app(config='config.Debug'):
 
 from events import *
 from model import *
+
 
 if __name__ == '__main__':
     app = create_app()

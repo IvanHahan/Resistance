@@ -22,6 +22,9 @@ class GameManager:
 
     # Getters
 
+    def configure(self, rules):
+        self.max_players = max(rules.keys())
+
     def request_game(self, id):
         return db.session.query(model.Game).filter(model.Game.id == id).first()
 
@@ -45,6 +48,8 @@ class GameManager:
 
     @db_commit
     def join_game(self, game_id, name, sid):
+        if len(db.session.query(model.Player.id).filter(model.Player.game_id == game_id).all()) == self.max_players:
+            raise errors.GameFull()
         player = model.Player(name=name, sid=sid, game_id=game_id)
         db.session.add(player)
         return player
@@ -53,10 +58,9 @@ class GameManager:
     def leave_game(self, game_id, sid, player_id):
 
         player = db.session.query(model.Player).filter(db.and_(model.Player.sid == sid,
-                                                                   model.Player.game_id == game_id)).first()
+                                                               model.Player.game_id == game_id)).first()
         if player is None:
             raise errors.UknownPlayer()
-
         # Player wants to leave
         if player.id == player_id:
 
@@ -67,7 +71,7 @@ class GameManager:
         # Player wants to kick
         elif db.session.query(model.Game).filter(db.and_(model.Game.host_id == player.id,
                                                          model.Game.id == game_id)).first() is not None:
-            db.session.query(model.Player).filter(db.and_(model.Player.sid == sid,
+            db.session.query(model.Player).filter(db.and_(model.Player.id == player_id,
                                                           model.Player.game_id == game_id)).delete()
         else:
             raise errors.ForbiddenAction()
@@ -80,5 +84,8 @@ class GameManager:
 
         if player_id is None:
             raise errors.UknownPlayer()
+        elif db.session.query(model.Game).filter(db.and_(model.Game.host_id == player_id[0],
+                                                         model.Game.id == game_id)).first() is None:
+            raise errors.ForbiddenAction()
 
         db.session.query(model.Game).filter(model.Game.host_id == player_id[0]).delete()

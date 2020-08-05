@@ -25,13 +25,13 @@ class Game(db.Model):
     resistance_won = db.Column(db.Boolean, nullable=True)
     _leader_idx = db.Column(db.Integer, nullable=False, default=-1)
 
-    host_id = db.Column(db.Integer, db.ForeignKey('players.id', use_alter=True, name='fk_host_id'), nullable=True)
+    host_id = db.Column(db.Integer, db.ForeignKey('players.id', use_alter=True, name='fk_host_id', ondelete='cascade'), nullable=True)
 
     host = db.relationship('Player', uselist=False, foreign_keys=[host_id], post_update=True)
-    players = db.relationship('Player', uselist=True, back_populates='game', cascade='all, delete-orphan',
+    players = db.relationship('Player', uselist=True, back_populates='game', cascade='all, delete',
                               foreign_keys='[Player.game_id]')
     missions = db.relationship('Mission', back_populates='game',
-                               cascade='all, delete-orphan',
+                               cascade='all, delete',
                                order_by='Mission.id')
 
     # @property

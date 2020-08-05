@@ -19,4 +19,4 @@ class Test(Default):
     WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/resistance_test'
     # SQLALCHEMY_ECHO = True
-    RULES_PATH = abs_path('rules/test_1.yml')
+    RULES_PATH = abs_path('rules/test.yml')

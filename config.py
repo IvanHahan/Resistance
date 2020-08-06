@@ -11,6 +11,7 @@ class Default(object):
 
 class Debug(Default):
     DEBUG = True
+    RULES_PATH = abs_path('rules/test.yml')
 
 
 class Test(Default):

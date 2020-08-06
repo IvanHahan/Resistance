@@ -35,6 +35,10 @@ class Mission(db.Model):
     def stage(self):
         return self._stage
 
+    def next(self):
+        self._stage = RoundStage(int(self.stage.value) + 1)
+        return self.stage
+
     def _set_status(self, status):
         self._stage = status
         db.session.commit()
@@ -121,10 +125,11 @@ class Mission(db.Model):
             # return actions.MissionComplete(self.game_id, self.voting.result)
 
     def current_voting(self):
-        if self._stage == RoundStage.troop_voting:
-            return self.troop_proposals[-1].voting
-        elif self._stage == RoundStage.mission_voting:
+        if self.voting is not None:
             return self.voting
+        elif len(self.troop_proposals) > 0:
+            return self.troop_proposals[-1].voting
+        return None
 
     def to_dict(self):
         return {

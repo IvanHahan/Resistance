@@ -42,7 +42,7 @@ class Player(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'role': self.role,
+            'role': self.role.name if self.role is not None else None,
             'game_id': self.game_id,
             'name': self.name
         }
@@ -86,7 +86,6 @@ class Voting(db.Model):
     def vote(self, player_id, result):
         vote = [vote for vote in self.votes if vote.voter_id == player_id][0]
         vote.result = result
-        db.session.commit()
 
     def to_dict(self):
         return {
@@ -100,7 +99,7 @@ class Vote(db.Model):
     __tablename__ = 'votes'
 
     id = db.Column(db.Integer, primary_key=True)
-    result = db.Column(db.Boolean, nullable=True)
+    result = db.Column(db.Boolean, nullable=True, default=None)
 
     voter_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)
     voting_id = db.Column(db.Integer, db.ForeignKey('votings.id'), nullable=False)
@@ -115,3 +114,6 @@ class Vote(db.Model):
             'voter_id': self.voter_id,
             'voting_id': self.voting_id,
         }
+
+    def __repr__(self):
+        return f'Vote {self.id}, {self.result}'

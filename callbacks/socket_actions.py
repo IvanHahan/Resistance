@@ -16,7 +16,7 @@ class GameUpdated(Callback):
         self.game_dict = game_dict
 
     def execute(self):
-        emit('game_updated', self.game_dict, room=self.game_id)
+        emit('game_updated', self.game_dict, room=self.game_id, namespace='/game')
 
 
 class MissionUpdated(Callback):

@@ -1,16 +1,13 @@
+from flask import request
 from flask_socketio import send, join_room, leave_room, emit
-from sqlalchemy.exc import IntegrityError
 
 import errors
 import model
 from app import db, socketio
-from flask import request
+from game_manager import GameManager
 
+game_manager = GameManager()
 
-def verify_player(player_id):
-    if db.session.query(model.Player.sid).filter(db.and_(model.Player.id == player_id,
-                                                       model.Player.sid == request.sid)).first() is None:
-        raise errors.ForbiddenAction()
 
 @socketio.on('connect', namespace='/lobby')
 def connect():
@@ -49,30 +46,23 @@ def on_leave(info):
         player = game_manager.request_player(player_id)
         game_manager.leave_game(game_id, request.sid, player_id)
         game = game_manager.request_game(game_id)
-        leave_room(game.id, sid=player.sid)
-        emit('game_updated', game.to_dict(), room=game_id, broadcast=True)
+        emit('game_updated', game.to_dict(), room=game_id, broadcast=True, namespace='/game')
         emit('game_list', [game.to_dict(False) for game in game_manager.request_games()],
              namespace='/lobby', broadcast=True)
+        leave_room(game.id, sid=player.sid)
         return 'You left game'
     except errors.GameError as err:
         return str(err)
 
 
 @socketio.on('start_game', namespace='/game')
-def on_start(player_id):
-    game = db.session.query(model.Game) \
-        .filter(model.Game.host_id == player_id).first()
+def on_start(info):
+    print('start_game')
+    game_id = info['game_id']
     try:
-        verify_player(player_id)
-        if game is not None:
-            try:
-                for action in game.update():
-                    action.execute()
-                # emit('game_status_changed', {'status': game.status.name}, namespace='/games', broadcast=True)
-            except errors.GameError as err:
-                return str(err)
-        else:
-            raise errors.GameNotFound()
+        game = game_manager.request_game(game_id)
+        game_manager.update_game(game, sid=request.sid).execute()
+        return 'Game started'
     except errors.GameError as err:
         return str(err)
 
@@ -90,6 +80,7 @@ def on_create_game(info):
     except errors.GameError as err:
         return str(err)
 
+
 @socketio.on('delete_game', namespace='/game')
 def on_delete_game(info):
     print('delete_game')
@@ -104,63 +95,26 @@ def on_delete_game(info):
         return str(err)
 
 
-
-
 @socketio.on('make_proposal', namespace='/game')
 def on_proposal(info):
-    player_id = info['leader_id']
     game_id = info['game_id']
     players_ids = info['players_id']
 
     try:
-        verify_player(player_id)
-        game = db.session.query(model.Game) \
-            .filter(model.Game.id == game_id).first()
-        if game is not None:
-            for action in game.update(mission_state=model.RoundStage.troop_proposal, players_ids=players_ids):
-                action.execute()
-        else:
-            raise str(errors.GameNotFound())
+        game = game_manager.request_player(game_id)
+        game_manager.update_game(game, players_ids=players_ids, sid=request.sid)
     except errors.GameError as err:
         return str(err)
 
 
-@socketio.on('troop_vote', namespace='/game')
-def on_troop_vote(info):
+@socketio.on('vote', namespace='/game')
+def on_vote(info):
     result = info['result']
     game_id = info['game_id']
     voter_id = info['voter_id']
 
     try:
-        verify_player(voter_id)
-        game = db.session.query(model.Game) \
-            .filter(model.Game.id == game_id).first()
-
-        if game is not None:
-            actions = game.update(model.RoundStage.troop_voting, result=result, player_id=voter_id)
-            for action in actions:
-                action.execute()
-        else:
-            raise str(errors.GameNotFound())
-    except errors.GameError as err:
-        return str(err)
-
-
-@socketio.on('mission_vote', namespace='/game')
-def on_troop_vote(info):
-    result = info['result']
-    game_id = info['game_id']
-    voter_id = info['voter_id']
-
-    try:
-        verify_player(voter_id)
-        game = db.session.query(model.Game) \
-            .filter(model.Game.id == game_id).first()
-        if game is not None:
-            actions = game.update(model.RoundStage.mission_voting, result=result, player_id=voter_id)
-            for action in actions:
-                action.execute()
-        else:
-            raise errors.GameNotFound()
+        game = game_manager.request_player(game_id)
+        game_manager.update_game(game, result=result, sid=request.sid, player_id=voter_id).execute()
     except errors.GameError as err:
         return str(err)

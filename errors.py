@@ -17,13 +17,28 @@ class VoteNotFound(GameError):
 
 class InsufficientPlayersNumber(GameError):
 
-    def __init__(self, value, target):
-        super().__init__(f'Insufficient players number {value}. Minimum is {target}')
+    def __init__(self):
+        super().__init__(f'Insufficient players number')
 
 
 class GameNotStarted(GameError):
     def __init__(self):
         super().__init__(f'Game not started')
+
+
+class NotLeader(GameError):
+    def __init__(self):
+        super().__init__(f'You are not current leader')
+
+
+class CantVote(GameError):
+    def __init__(self):
+        super().__init__(f'You cannot vote')
+
+
+class WrongMissionState(GameError):
+    def __init__(self):
+        super().__init__(f'Wrong mission state')
 
 
 class GameFull(GameError):

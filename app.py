@@ -7,11 +7,14 @@ from flasgger import Swagger
 db = SQLAlchemy()
 socketio = SocketIO()
 swagger = Swagger()
-from game_manager import GameManager
 
-game_manager = GameManager()
+from events import *
+from model import *
+
 
 def create_app(config='config.Debug'):
+
+    global game_manager
 
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'secret!'
@@ -34,27 +37,8 @@ def create_app(config='config.Debug'):
     return app
 
 
-# from flask_socketio import send, emit
-# @socketio.on('connect', namespace='test')
-# def connect():
-#     print('connected')
-#     send('connected')
-#     emit('pizda')
-#
-# @socketio.on('pidor', namespace='test')
-# def pidor(hui):
-#     print('pidor', hui)
-#     send('Ti pidor')
-
-# @socketio.on('message', namespace='test')
-# def message(mes):
-#     print(mes)
-#     send('recieved')
-
-from events import *
-from model import *
-
-
 if __name__ == '__main__':
+
     app = create_app()
+
     socketio.run(app, host='192.168.0.102', port=5000)

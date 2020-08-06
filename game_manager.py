@@ -1,8 +1,10 @@
+import numpy as np
 from sqlalchemy.exc import IntegrityError
 
 import errors
 import model
 from app import db
+from callbacks import socket_actions as actions
 
 
 def db_commit(function):
@@ -23,16 +25,24 @@ class GameManager:
     # Getters
 
     def configure(self, rules):
+        self.min_players = min(rules.keys())
         self.max_players = max(rules.keys())
+        self.rules = rules
 
     def request_game(self, id):
-        return db.session.query(model.Game).filter(model.Game.id == id).first()
+        game = db.session.query(model.Game).filter(model.Game.id == id).first()
+        if game is None:
+            raise errors.GameNotFound()
+        return game
 
     def request_games(self):
         return db.session.query(model.Game).all()
 
     def request_player(self, id):
-        return db.session.query(model.Player).filter(model.Player.id == id).first()
+        player = db.session.query(model.Player).filter(model.Player.id == id).first()
+        if player is None:
+            raise errors.UknownPlayer()
+        return player
 
     # Setters
 
@@ -89,3 +99,171 @@ class GameManager:
             raise errors.ForbiddenAction()
 
         db.session.query(model.Game).filter(model.Game.host_id == player_id[0]).delete()
+
+    @db_commit
+    def update_game(self, game, **kwargs):
+
+        if game.stage == model.GameStage.pending:
+            return self._handle_pending(game, **kwargs)
+        if game.stage == model.GameStage.starting:
+            return self._handle_starting(game, **kwargs)
+        elif game.stage == model.GameStage.start_mission:
+            return self._handle_start_mission(game, **kwargs)
+        elif game.stage == model.GameStage.executing_mission:
+            return self._handle_executing_mission(game, **kwargs)
+
+    def _handle_pending(self, game, **kwargs):
+        if game.host.sid != kwargs['sid']:
+            raise errors.ForbiddenAction()
+        elif len(game.players) < self.min_players:
+            raise errors.InsufficientPlayersNumber()
+
+        game.next()
+        db.session.commit()
+        return self.update_game(game, **kwargs)
+
+    def _handle_starting(self, game, **kwargs):
+        game.setup(self.rules[len(game.players)]['spies'])
+        game.next()
+        db.session.commit()
+        return self.update_game(game, **kwargs)
+
+    def _handle_start_mission(self, game, **kwargs):
+        _ = self._create_mission(game.id, len(game.players), len(game.missions) - 1)
+        game.next()
+        db.session.commit()
+        return self.update_game(game, **kwargs)
+
+    def _handle_executing_mission(self, game, **kwargs):
+        action = self._update_mission(game.current_mission(), **kwargs)
+        if game.current_mission().stage == model.RoundStage.mission_results:
+            if game._complete_game():
+                game.next()
+                db.session.commit()
+                return actions.GameUpdated(game.to_dict())
+            else:
+                game.stage = model.GameStage.start_mission
+                db.session.commit()
+                return self.update_game()
+        return actions.GameUpdated(game.to_dict())
+
+    def _create_mission(self, game_id, num_players, index):
+        mission = model.Mission(game_id=game_id,
+                                num_of_fails=self.rules[num_players]['fails_num'][index])
+        db.session.add(mission)
+        return mission
+
+    def _create_proposal(self, mission_id, proposer_id, members_ids, players_ids):
+        players = db.session.query(model.Player).filter(model.Player.id.in_(members_ids)).all()
+        voting = model.Voting()
+        voting.votes = [model.Vote(voter_id=player) for player in players_ids]
+        proposal = model.TroopProposal(members=players,
+                                       proposer_id=proposer_id,
+                                       mission_id=mission_id,
+                                       voting=voting)
+        db.session.add(proposal)
+        db.session.add(voting)
+        return proposal
+
+    def _update_mission(self, mission, **kwargs):
+        if mission.stage == model.RoundStage.proposal_request:
+            return self._handle_proposal_request(mission, **kwargs)
+        elif mission.stage == model.RoundStage.troop_proposal:
+            return self._handle_troop_proposal(mission, **kwargs)
+        elif mission.stage == model.RoundStage.troop_voting:
+            return self._handle_troop_voting(mission, **kwargs)
+        elif mission.stage == model.RoundStage.troop_voting_results:
+            return self._handle_troop_voting_results(mission, **kwargs)
+        elif mission.stage == model.RoundStage.mission_voting:
+            return self._handle_mission_voting(mission, **kwargs)
+        elif mission.stage == model.RoundStage.mission_voting_result:
+            return self._handle_mission_voting_result(mission, **kwargs)
+        elif mission.stage == model.RoundStage.mission_results:
+            return actions.MissionUpdated(mission.game_id, mission.to_dict())
+
+    def _handle_proposal_request(self, mission, **kwargs):
+        if 'players_ids' in kwargs:
+            mission.next()
+            return self._update_mission(mission, **kwargs)
+        return actions.MissionUpdated(mission.game, mission.to_dict())
+
+    def _handle_troop_proposal(self, mission, **kwargs):
+        target_players = self.rules[len(mission.game.players)]['mission_team'][len(mission.game.missions) - 1]
+
+        if 'result' in kwargs:
+            mission.next()
+            db.session.commit()
+            return self._update_mission(mission, **kwargs)
+        elif 'players_ids' not in kwargs:
+            raise errors.InvalidPlayersNumber(0, target_players)
+        elif kwargs['sid'] != mission.game.current_leader().sid:
+            raise errors.NotLeader()
+        members_ids = kwargs['players_ids']
+        if len(members_ids) != target_players:
+            raise errors.InvalidPlayersNumber(len(members_ids), target_players)
+
+        players_ids = [p.id for p in mission.game.players]
+        _ = self._create_proposal(mission.id, mission.game.current_leader().id, members_ids, players_ids)
+        return actions.MissionUpdated(mission.game_id, mission.to_dict())
+
+    def _handle_troop_voting(self, mission, **kwargs):
+
+        player_id = db.session.query(model.Player.id) \
+            .filter(db.and_(model.Player.sid == kwargs['sid'],
+                            model.Player.game_id == mission.game_id,
+                            model.Player.id.in_([v.voter_id for v
+                                                 in mission.current_voting().votes if v.result is None]))).first()
+
+        if 'result' not in kwargs:
+            return actions.MissionUpdated(mission.game_id, mission.to_dict())
+        elif player_id is None:
+            raise errors.CantVote()
+
+        mission.current_voting().vote(player_id[0], kwargs['result'])
+        if mission.current_voting().is_complete():
+            mission.next()
+            db.session.commit()
+            return self._update_mission(mission, **kwargs)
+
+    def _handle_troop_voting_results(self, mission, **kwargs):
+        if 'mission_result' in kwargs:
+            mission.next()
+            db.session.commit()
+            return self._update_mission(mission, **kwargs)
+        voting = mission.troop_proposals[-1].voting
+        voting.result = sum([v.result for v in voting.votes]) > len(voting.votes) // 2
+        if voting.result:
+            mission.troop_members = mission.troop_proposals[-1].members
+            mission.voting = model.Voting()
+            mission.voting.votes = [model.Vote(voter=player) for player in mission.troop_members]
+            db.session.add(mission.voting)
+            return actions.MissionUpdated(mission.game_id, mission.to_dict())
+        else:
+            mission._stage = model.RoundStage.proposal_request
+            db.session.commit()
+            return self._update_mission(mission, **kwargs)
+
+    def _handle_mission_voting(self, mission, **kwargs):
+        voter_ids = [v.voter_id for v in mission.current_voting().votes if v.result is None]
+        player_id = db.session.query(model.Player.id) \
+            .filter(db.and_(model.Player.sid == kwargs['sid'],
+                            model.Player.game_id == mission.game_id,
+                            model.Player.id.in_(voter_ids))).first()
+
+        if 'result' not in kwargs:
+            return actions.MissionUpdated(mission.game_id, mission.to_dict())
+        elif player_id is None:
+            raise errors.CantVote()
+
+        mission.current_voting().vote(player_id[0], kwargs['result'])
+        if mission.current_voting().is_complete():
+            mission.next()
+            db.session.commit()
+            return self._update_mission(mission, **kwargs)
+
+    def _handle_mission_voting_result(self, mission, **kwargs):
+        voting = mission.voting
+        voting.result = np.bitwise_not([vote.result for vote in voting.votes]).sum() < mission.num_of_fails
+        mission.next()
+        db.session.commit()
+        return self._update_mission(mission, **kwargs)

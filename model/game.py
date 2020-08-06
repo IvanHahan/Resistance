@@ -45,24 +45,17 @@ class Game(db.Model):
             return GameStatus.finished
         return GameStatus.in_progress
 
-    def _set_stage(self, status):
-        self.stage = status
-        db.session.commit()
+    def next(self):
+        self.stage = GameStage(int(self.stage.value) + 1)
+        return self.stage
 
-    def _new_mission(self):
-        mission = Mission(game=self, num_of_fails=app.rules[len(self.players)]['fails_num'][len(self.missions) - 1])
-        db.session.add(mission)
-        db.session.commit()
-        return mission
-
-    def _setup(self):
-        spies_idx = np.random.randint(0, len(self.players), app.rules[len(self.players)]['spies'])
+    def setup(self, spies_num):
+        spies_idx = np.random.randint(0, len(self.players), spies_num)
         for i in range(len(self.players)):
             if i in spies_idx:
                 self.players[i].role = Role.spy
             else:
                 self.players[i].role = Role.resistance
-        db.session.commit()
 
     def _complete_game(self):
         fail_missions = len([mission for mission in self.missions if mission.voting.result is False])
@@ -90,48 +83,13 @@ class Game(db.Model):
         leader = self.players[self._leader_idx]
         return leader
 
-    def add_player(self, player_id, sid, is_host=False):
-        if self.stage != GameStage.pending:
-            player = None
-            for p in self.players:
-                if p.id == player_id:
-                    player = p
-            if player is not None:
-                raise errors.UknownPlayer()
-            player.sid = sid
-            db.session.commit()
-            return player
-        elif (self.players is None or len(self.players) < 10) and self.stage == GameStage.pending:
-            player = Player(name=player_id, sid=sid, game=self)
-            if is_host:
-                self.host = player
-            db.session.add(player)
-            db.session.commit()
-            return player
-        else:
-            raise errors.GameFull()
-
-    def remove_player(self, player_id):
-        if self.stage == GameStage.pending:
-            username = db.session.query(Player.name).filter(Player.id == player_id).first()[0]
-            db.session.query(Player).filter(Player.id == player_id).delete()
-            db.session.commit()
-            return username
-        else:
-            raise errors.UknownPlayer()
-
     def current_leader(self):
-        if self.stage == GameStage.pending:
-            raise errors.GameNotStarted()
         return self.players[self._leader_idx]
 
     def update(self, mission_state=None, **kwargs):
         return self.update_for_state(self.stage, mission_state, **kwargs)
 
     def update_for_state(self, state, mission_state=None, **kwargs):
-
-        if len(self.players) not in app.rules.keys():
-            raise errors.InsufficientPlayersNumber(len(self.players), min(app.rules.keys()))
 
         self._set_stage(state)
         if self.stage == GameStage.pending:

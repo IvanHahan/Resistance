@@ -1,0 +1,28 @@
+Game:
+  properties:
+    id:
+      type: integer
+    stage:
+      type: string
+      enum: [pending, starting, start_mission, executing_mission, finished]
+    host_name:
+      type: string
+    details:
+      $ref: #/GameDetails
+      required: False
+
+GameDetails:
+  properties:
+    resistance_won:
+      type: bool
+      required: false
+    hostх:
+      $ref: ./player.yml
+    players:
+      type: array
+      items:
+        $ref: ./player.yml
+    missions:
+      type: array
+      items:
+        $ref: ./mission.yml

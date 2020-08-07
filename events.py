@@ -18,7 +18,7 @@ def connect():
 
 @socketio.on('query_games', namespace='/lobby')
 def query_games(info):
-    games = db.session.query(model.Game).filter(model.Game.stage == model.GameStage.pending).all()
+    games = game_manager.request_games()
     emit('game_list', [g.to_dict(include_details=False) for g in games], json=True)
 
 

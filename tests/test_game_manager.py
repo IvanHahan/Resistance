@@ -177,7 +177,7 @@ class TestMissionTroopStage(TestCase):
             game = game_manager.request_game(self.game_id)
             mission = game.current_mission()
             game_manager.update_mission(mission, sid=game.current_leader().sid, players_ids=[1])
-            self.assertTrue(mission.stage == model.RoundStage.troop_proposal)
+            self.assertTrue(mission.stage == model.RoundStage.troop_voting)
             self.assertTrue(len(mission.current_voting().votes) == len(game.players))
             self.assertTrue(len(mission.troop_proposals[-1].members) == 1)
             self.assertTrue(mission.troop_proposals[-1].members[0].id == 1)
@@ -205,7 +205,7 @@ class TestMissionTroopStage(TestCase):
             game_manager.update_mission(mission, sid='1', result=True)
             game_manager.update_mission(mission, sid='2', result=True)
             game_manager.update_mission(mission, sid='3', result=True)
-            self.assertTrue(mission.stage == model.RoundStage.troop_voting_results)
+            self.assertTrue(mission.stage == model.RoundStage.mission_voting)
             self.assertTrue(mission.troop_proposals[-1].voting.result is True)
 
     def test_troop_vote_approve_twice_vote_fail(self):

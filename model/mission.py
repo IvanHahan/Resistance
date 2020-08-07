@@ -135,10 +135,7 @@ class Mission(db.Model):
         return {
             'id': self.id,
             'stage': self.stage.name,
-            'members_ids': [m.id for m in self.troop_members],
-            'proposals': [p.to_dict() for p in self.troop_proposals],
             'game_id': self.game_id,
-            'voting': self.voting.to_dict() if self.voting is not None else None,
         }
 
     def __repr__(self):

@@ -121,13 +121,15 @@ class Game(db.Model):
     def to_dict(self, include_details=True):
         obj = {
             'id': self.id,
-            'status': self.stage.name,
-            'resistance_won': self.resistance_won,
-            'leader_index': self._leader_idx,
-            'host_id': self.host_id,
+            'stage': self.stage.name,
             'host_name': self.host.name
         }
         if include_details:
-            obj['players'] = [player.to_dict() for player in self.players]
-            obj['missions'] = [mission.to_dict() for mission in self.missions]
+            obj['details'] = {
+                'leader': self.current_leader().to_dict(),
+                'host': self.host.to_dict(),
+                'players': [player.to_dict() for player in self.players],
+                'missions': [mission.to_dict() for mission in self.missions],
+                'resistance_won': self.resistance_won,
+            }
         return obj

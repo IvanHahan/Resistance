@@ -1,0 +1,10 @@
+Mission:
+  properties:
+    id:
+      type: integer
+    srage:
+      type: string
+      enum: [proposal_request, troop_proposal, troop_voting,
+             troop_voting_results, mission_voting, mission_voting_result, mission_results]
+    game_id:
+      type: integer

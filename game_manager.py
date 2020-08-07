@@ -40,7 +40,7 @@ class GameManager:
         return db.session.query(model.Mission).filter(model.Mission.id == id).first()
 
     def request_games(self):
-        return db.session.query(model.Game).all()
+        return db.session.query(model.Game).filter(model.Game.stage == model.GameStage.pending).all()
 
     def request_player(self, id):
         player = db.session.query(model.Player).filter(model.Player.id == id).first()
@@ -209,11 +209,7 @@ class GameManager:
     def _handle_troop_proposal(self, mission, **kwargs):
         target_players = self.rules['team'][len(mission.game.players)]['mission_team'][len(mission.game.missions) - 1]
 
-        if 'result' in kwargs:
-            mission.next()
-            db.session.commit()
-            return self.update_mission(mission, **kwargs)
-        elif 'players_ids' not in kwargs:
+        if 'players_ids' not in kwargs:
             raise errors.InvalidPlayersNumber(0, target_players)
         elif kwargs['sid'] != mission.game.current_leader().sid:
             raise errors.NotLeader()
@@ -223,6 +219,8 @@ class GameManager:
 
         players_ids = [p.id for p in mission.game.players]
         _ = self._create_proposal(mission.id, mission.game.current_leader().id, members_ids, players_ids)
+        mission.next()
+        db.session.commit()
         return actions.MissionUpdated(mission.game_id, mission.to_dict())
 
     def _handle_troop_voting(self, mission, **kwargs):
@@ -239,16 +237,13 @@ class GameManager:
             raise errors.CantVote()
 
         mission.current_voting().vote(player_id[0], kwargs['result'])
+        print(mission.current_voting().is_complete())
         if mission.current_voting().is_complete():
             mission.next()
             db.session.commit()
             return self.update_mission(mission, **kwargs)
 
     def _handle_troop_voting_results(self, mission, **kwargs):
-        if 'mission_result' in kwargs:
-            mission.next()
-            db.session.commit()
-            return self.update_mission(mission, **kwargs)
         voting = mission.troop_proposals[-1].voting
         voting.result = sum([v.result for v in voting.votes]) > len(voting.votes) // 2
         if voting.result:
@@ -256,6 +251,8 @@ class GameManager:
             mission.voting = model.Voting()
             mission.voting.votes = [model.Vote(voter=player) for player in mission.troop_members]
             db.session.add(mission.voting)
+            mission.next()
+            db.session.commit()
             return actions.MissionUpdated(mission.game_id, mission.to_dict())
         else:
             mission._stage = model.RoundStage.proposal_request

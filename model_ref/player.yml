@@ -1,0 +1,12 @@
+Player:
+  properties:
+    id:
+      type: integer
+    name:
+      type: string
+    role:
+      type: string
+      enum: [spy, resistance]
+      required: false
+    game_id:
+      type: integer

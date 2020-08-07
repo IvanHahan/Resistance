@@ -20,6 +20,8 @@ class GameStatus(enum.Enum):
 class Game(db.Model):
     __tablename__ = 'games'
 
+    missions_to_win = 2
+
     id = db.Column(db.Integer, primary_key=True)
     stage = db.Column(db.Enum(GameStage), default=GameStage.pending, nullable=False)
     resistance_won = db.Column(db.Boolean, nullable=True)
@@ -60,11 +62,10 @@ class Game(db.Model):
     def _complete_game(self):
         fail_missions = len([mission for mission in self.missions if mission.voting.result is False])
         success_missions = len([mission for mission in self.missions if mission.voting.result is True])
-        missions_to_win = app.rules[len(self.players)]['missions_to_win']
-        if fail_missions == missions_to_win:
+        if fail_missions == self.missions_to_win:
             self.resistance_won = False
             return True
-        elif success_missions == missions_to_win:
+        elif success_missions == self.missions_to_win:
             self.resistance_won = True
             return True
         return False

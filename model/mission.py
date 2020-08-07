@@ -140,3 +140,6 @@ class Mission(db.Model):
             'game_id': self.game_id,
             'voting': self.voting.to_dict() if self.voting is not None else None,
         }
+
+    def __repr__(self):
+        return f'Mission {self.id} {self.stage}'

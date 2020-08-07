@@ -25,15 +25,19 @@ class GameManager:
     # Getters
 
     def configure(self, rules):
-        self.min_players = min(rules.keys())
-        self.max_players = max(rules.keys())
+        self.min_players = min(rules['team'].keys())
+        self.max_players = max(rules['team'].keys())
         self.rules = rules
+        model.Game.missions_to_win = rules['missions_to_win']
 
     def request_game(self, id):
         game = db.session.query(model.Game).filter(model.Game.id == id).first()
         if game is None:
             raise errors.GameNotFound()
         return game
+
+    def request_mission(self, id):
+        return db.session.query(model.Mission).filter(model.Mission.id == id).first()
 
     def request_games(self):
         return db.session.query(model.Game).all()
@@ -58,7 +62,12 @@ class GameManager:
 
     @db_commit
     def join_game(self, game_id, name, sid):
-        if len(db.session.query(model.Player.id).filter(model.Player.game_id == game_id).all()) == self.max_players:
+        game_stage = db.session.query(model.Game.stage).filter(db.and_(model.Game.id == game_id)).first()
+        if game_stage is None:
+            raise errors.GameNotFound()
+        elif game_stage[0] != model.GameStage.pending:
+            raise errors.ForbiddenAction()
+        elif len(db.session.query(model.Player.id).filter(model.Player.game_id == game_id).all()) == self.max_players:
             raise errors.GameFull()
         player = model.Player(name=name, sid=sid, game_id=game_id)
         db.session.add(player)
@@ -86,6 +95,10 @@ class GameManager:
         else:
             raise errors.ForbiddenAction()
 
+        game = db.session.query(model.Game).filter(model.Game.id == game_id).first()
+        if game is not None and game.stage != model.GameStage.pending:
+            self._reset_game(game)
+
     @db_commit
     def delete_game(self, game_id, sid):
 
@@ -112,6 +125,11 @@ class GameManager:
         elif game.stage == model.GameStage.executing_mission:
             return self._handle_executing_mission(game, **kwargs)
 
+    def _reset_game(self, game):
+        game.stage = model.GameStage.pending
+        db.session.query(model.Mission).filter(model.Mission.game_id == game.id).delete()
+        return actions.GameUpdated(game.to_dict())
+
     def _handle_pending(self, game, **kwargs):
         if game.host.sid != kwargs['sid']:
             raise errors.ForbiddenAction()
@@ -123,7 +141,7 @@ class GameManager:
         return self.update_game(game, **kwargs)
 
     def _handle_starting(self, game, **kwargs):
-        game.setup(self.rules[len(game.players)]['spies'])
+        game.setup(self.rules['team'][len(game.players)]['spies'])
         game.next()
         db.session.commit()
         return self.update_game(game, **kwargs)
@@ -135,7 +153,7 @@ class GameManager:
         return self.update_game(game, **kwargs)
 
     def _handle_executing_mission(self, game, **kwargs):
-        action = self._update_mission(game.current_mission(), **kwargs)
+        action = self.update_mission(game.current_mission(), **kwargs)
         if game.current_mission().stage == model.RoundStage.mission_results:
             if game._complete_game():
                 game.next()
@@ -144,12 +162,12 @@ class GameManager:
             else:
                 game.stage = model.GameStage.start_mission
                 db.session.commit()
-                return self.update_game()
+                return self.update_game(game, **kwargs)
         return actions.GameUpdated(game.to_dict())
 
     def _create_mission(self, game_id, num_players, index):
         mission = model.Mission(game_id=game_id,
-                                num_of_fails=self.rules[num_players]['fails_num'][index])
+                                num_of_fails=self.rules['team'][num_players]['fails_num'][index])
         db.session.add(mission)
         return mission
 
@@ -165,7 +183,8 @@ class GameManager:
         db.session.add(voting)
         return proposal
 
-    def _update_mission(self, mission, **kwargs):
+    @db_commit
+    def update_mission(self, mission, **kwargs):
         if mission.stage == model.RoundStage.proposal_request:
             return self._handle_proposal_request(mission, **kwargs)
         elif mission.stage == model.RoundStage.troop_proposal:
@@ -184,16 +203,16 @@ class GameManager:
     def _handle_proposal_request(self, mission, **kwargs):
         if 'players_ids' in kwargs:
             mission.next()
-            return self._update_mission(mission, **kwargs)
+            return self.update_mission(mission, **kwargs)
         return actions.MissionUpdated(mission.game, mission.to_dict())
 
     def _handle_troop_proposal(self, mission, **kwargs):
-        target_players = self.rules[len(mission.game.players)]['mission_team'][len(mission.game.missions) - 1]
+        target_players = self.rules['team'][len(mission.game.players)]['mission_team'][len(mission.game.missions) - 1]
 
         if 'result' in kwargs:
             mission.next()
             db.session.commit()
-            return self._update_mission(mission, **kwargs)
+            return self.update_mission(mission, **kwargs)
         elif 'players_ids' not in kwargs:
             raise errors.InvalidPlayersNumber(0, target_players)
         elif kwargs['sid'] != mission.game.current_leader().sid:
@@ -223,13 +242,13 @@ class GameManager:
         if mission.current_voting().is_complete():
             mission.next()
             db.session.commit()
-            return self._update_mission(mission, **kwargs)
+            return self.update_mission(mission, **kwargs)
 
     def _handle_troop_voting_results(self, mission, **kwargs):
         if 'mission_result' in kwargs:
             mission.next()
             db.session.commit()
-            return self._update_mission(mission, **kwargs)
+            return self.update_mission(mission, **kwargs)
         voting = mission.troop_proposals[-1].voting
         voting.result = sum([v.result for v in voting.votes]) > len(voting.votes) // 2
         if voting.result:
@@ -241,7 +260,7 @@ class GameManager:
         else:
             mission._stage = model.RoundStage.proposal_request
             db.session.commit()
-            return self._update_mission(mission, **kwargs)
+            return self.update_mission(mission, **kwargs)
 
     def _handle_mission_voting(self, mission, **kwargs):
         voter_ids = [v.voter_id for v in mission.current_voting().votes if v.result is None]
@@ -250,20 +269,20 @@ class GameManager:
                             model.Player.game_id == mission.game_id,
                             model.Player.id.in_(voter_ids))).first()
 
-        if 'result' not in kwargs:
+        if 'mission_result' not in kwargs:
             return actions.MissionUpdated(mission.game_id, mission.to_dict())
         elif player_id is None:
             raise errors.CantVote()
 
-        mission.current_voting().vote(player_id[0], kwargs['result'])
+        mission.current_voting().vote(player_id[0], kwargs['mission_result'])
         if mission.current_voting().is_complete():
             mission.next()
             db.session.commit()
-            return self._update_mission(mission, **kwargs)
+            return self.update_mission(mission, **kwargs)
 
     def _handle_mission_voting_result(self, mission, **kwargs):
         voting = mission.voting
         voting.result = np.bitwise_not([vote.result for vote in voting.votes]).sum() < mission.num_of_fails
         mission.next()
         db.session.commit()
-        return self._update_mission(mission, **kwargs)
+        return self.update_mission(mission, **kwargs)

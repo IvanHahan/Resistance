@@ -8,3 +8,12 @@ Mission:
              troop_voting_results, mission_voting, mission_voting_result, mission_results]
     game_id:
       type: integer
+
+    voting:
+      $ref: ./voting.yml
+      required: false
+    proposals:
+      type: array
+        items:
+          $ref: ./proposal.yml
+

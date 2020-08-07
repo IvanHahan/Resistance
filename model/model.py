@@ -65,10 +65,10 @@ class TroopProposal(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'proposer_id': self.proposer_id,
+            'proposer_id': self.proposer.id,
             'voting': self.voting.to_dict() if self.voting is not None else None,
             'mission_id': self.mission_id,
-            'members_ids': [m.id for m in self.members],
+            'members_ids': [p.id for p in self.members],
         }
 
 
@@ -112,7 +112,7 @@ class Vote(db.Model):
             'id': self.id,
             'result': self.result,
             'voter_id': self.voter_id,
-            'voting_id': self.voting_id,
+            'voting_id': self.voting_id
         }
 
     def __repr__(self):

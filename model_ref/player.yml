@@ -9,4 +9,6 @@ Player:
       enum: [spy, resistance]
       required: false
     game_id:
-      type: integer
+      type: array
+        items:
+          $ref: ./proposal.yml

@@ -1,0 +1,21 @@
+Voting:
+  properties:
+    id:
+      type: integer
+    result:
+      type: bool
+      required: false
+    votes:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          result:
+            type: bool
+          voter_id:
+            type: integer
+          voting_id:
+            type: integer
+

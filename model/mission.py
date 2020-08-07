@@ -136,6 +136,8 @@ class Mission(db.Model):
             'id': self.id,
             'stage': self.stage.name,
             'game_id': self.game_id,
+            'proposals': [tp.to_dict() for tp in self.troop_proposals],
+            'voting': self.voting.to_dict() if self.voting is not None else None
         }
 
     def __repr__(self):

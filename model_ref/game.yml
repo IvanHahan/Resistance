@@ -16,7 +16,7 @@ GameDetails:
     resistance_won:
       type: bool
       required: false
-    hostх:
+    host:
       $ref: ./player.yml
     players:
       type: array

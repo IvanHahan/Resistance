@@ -111,10 +111,9 @@ def on_proposal(info):
 def on_vote(info):
     result = info['result']
     game_id = info['game_id']
-    voter_id = info['voter_id']
 
     try:
         game = game_manager.request_player(game_id)
-        game_manager.update_game(game, result=result, sid=request.sid, player_id=voter_id).execute()
+        game_manager.update_game(game, result=result, sid=request.sid).execute()
     except errors.GameError as err:
         return str(err)

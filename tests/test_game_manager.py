@@ -255,7 +255,7 @@ class TestMissionMissionStage(TestCase):
         with self.app.app_context():
             game = game_manager.request_game(self.game_id)
             mission = game.current_mission()
-            game_manager.update_mission(mission, sid='1', mission_result=True)
+            game_manager.update_mission(mission, sid='1', result=True)
             self.assertTrue(mission.stage == model.RoundStage.mission_results)
             self.assertTrue(mission.voting.result is True)
 
@@ -263,7 +263,7 @@ class TestMissionMissionStage(TestCase):
         with self.app.app_context():
             game = game_manager.request_game(self.game_id)
             mission = game.current_mission()
-            game_manager.update_mission(mission, sid='1', mission_result=False)
+            game_manager.update_mission(mission, sid='1', result=False)
             self.assertTrue(mission.stage == model.RoundStage.mission_results)
             self.assertTrue(mission.voting.result is False)
 
@@ -272,7 +272,7 @@ class TestMissionMissionStage(TestCase):
             game = game_manager.request_game(self.game_id)
             mission = game.current_mission()
             with self.assertRaises(errors.CantVote):
-                game_manager.update_mission(mission, sid='2', mission_result=True)
+                game_manager.update_mission(mission, sid='2', result=True)
             self.assertTrue(mission.stage == model.RoundStage.mission_voting)
             self.assertTrue(mission.voting.result is None)
 
@@ -298,7 +298,7 @@ class TestGameProgress(TestCase):
             game_manager.update_game(game, sid='1', result=True)
             game_manager.update_game(game, sid='2', result=True)
             game_manager.update_game(game, sid='3', result=True)
-            game_manager.update_game(game, sid='1', mission_result=True)
+            game_manager.update_game(game, sid='1', result=True)
             self.assertTrue(len(game.missions) == 2)
 
     def test_game_complete_resistance_won_success(self):
@@ -309,16 +309,16 @@ class TestGameProgress(TestCase):
             game_manager.update_game(game, sid='1', result=True)
             game_manager.update_game(game, sid='2', result=True)
             game_manager.update_game(game, sid='3', result=True)
-            game_manager.update_game(game, sid='1', mission_result=True)
+            game_manager.update_game(game, sid='1', result=True)
 
             game_manager.update_game(game, sid=game.current_leader().sid, players_ids=[1, 2])
             game_manager.update_game(game, sid='1', result=True)
             game_manager.update_game(game, sid='2', result=True)
             game_manager.update_game(game, sid='3', result=True)
-            game_manager.update_game(game, sid='1', mission_result=True)
+            game_manager.update_game(game, sid='1', result=True)
             self.assertTrue(game.current_mission().stage == model.RoundStage.mission_voting)
             self.assertTrue(game.stage == model.GameStage.executing_mission)
-            game_manager.update_game(game, sid='2', mission_result=True)
+            game_manager.update_game(game, sid='2', result=True)
 
             self.assertTrue(game.stage == model.GameStage.finished)
             self.assertTrue(game.resistance_won is True)

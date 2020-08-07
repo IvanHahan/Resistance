@@ -266,12 +266,12 @@ class GameManager:
                             model.Player.game_id == mission.game_id,
                             model.Player.id.in_(voter_ids))).first()
 
-        if 'mission_result' not in kwargs:
+        if 'result' not in kwargs:
             return actions.MissionUpdated(mission.game_id, mission.to_dict())
         elif player_id is None:
             raise errors.CantVote()
 
-        mission.current_voting().vote(player_id[0], kwargs['mission_result'])
+        mission.current_voting().vote(player_id[0], kwargs['result'])
         if mission.current_voting().is_complete():
             mission.next()
             db.session.commit()

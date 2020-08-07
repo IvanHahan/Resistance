@@ -1,0 +1,23 @@
+Proposal:
+  properties:
+    id:
+      type: integer
+    mission_id:
+      type: integer
+    voting:
+      $ref: ./voting.yml
+    proposer_id:
+      type: integer
+    members_ids:
+      type: array
+      items:
+        type: integer
+
+ProposalDetails:
+  properties:
+    proposer:
+      $ref: ./player.yml
+    members:
+      type: array
+      items:
+        $ref: ./player.yml

@@ -3,10 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 import yaml
 from flasgger import Swagger
+from logger import get_logger
 
 db = SQLAlchemy()
 socketio = SocketIO()
 swagger = Swagger()
+app_logger = get_logger('events')
 
 from events import *
 from model import *

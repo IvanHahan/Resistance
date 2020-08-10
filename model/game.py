@@ -1,5 +1,3 @@
-import app
-from app import db
 from .mission import *
 
 

@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 
 import errors
 import model
-from app import db
+from services import db
 from callbacks import socket_actions as actions
 
 
@@ -237,7 +237,6 @@ class GameManager:
             raise errors.CantVote()
 
         mission.current_voting().vote(player_id[0], kwargs['result'])
-        print(mission.current_voting().is_complete())
         if mission.current_voting().is_complete():
             mission.next()
             db.session.commit()

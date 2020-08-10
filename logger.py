@@ -3,7 +3,7 @@ import os
 import time
 
 
-def set_global_config(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+def set_global_config(format="%(asctime)s - %(levelname)s - %(message)s",
                       file_name=None,
                       level=logging.INFO):
     handlers = [logging.StreamHandler()]

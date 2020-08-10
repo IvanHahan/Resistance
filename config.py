@@ -21,3 +21,7 @@ class Test(Default):
     SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/resistance_test'
     # SQLALCHEMY_ECHO = True
     RULES_PATH = abs_path('rules/test.yml')
+
+
+class TestProd(Default):
+    RULES_PATH = abs_path('rules/basic.yml')

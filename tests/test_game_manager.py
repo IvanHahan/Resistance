@@ -322,3 +322,85 @@ class TestGameProgress(TestCase):
 
             self.assertTrue(game.stage == model.GameStage.finished)
             self.assertTrue(game.resistance_won is True)
+
+
+class TestProdGameProgress(TestCase):
+    def setUp(self):
+        self.app = create_app('config.TestProd')
+        with self.app.app_context():
+            game = game_manager.create_game('test', '1')
+            game_manager.join_game(game.id, 'test1', '2')
+            game_manager.join_game(game.id, 'test2', '3')
+            game_manager.join_game(game.id, 'test3', '4')
+            game_manager.join_game(game.id, 'test4', '5')
+            game_manager.join_game(game.id, 'test5', '6')
+            game_manager.update_game(game, sid='1')
+            self.game_id = game.id
+
+    def test_game_complete_resistance_won_success(self):
+        with self.app.app_context():
+            game = game_manager.request_game(self.game_id)
+
+            # 1
+            game_manager.update_game(game, sid=game.current_leader().sid, players_ids=[1, 2])
+            game_manager.update_game(game, sid='1', result=True)
+            game_manager.update_game(game, sid='2', result=True)
+            game_manager.update_game(game, sid='3', result=True)
+            game_manager.update_game(game, sid='4', result=True)
+            game_manager.update_game(game, sid='5', result=False)
+            game_manager.update_game(game, sid='6', result=False)
+
+            game_manager.update_game(game, sid='1', result=True)
+            game_manager.update_game(game, sid='2', result=True)
+
+            # 2
+            game_manager.update_game(game, sid=game.current_leader().sid, players_ids=[2, 3, 5])
+            game_manager.update_game(game, sid='1', result=True)
+            game_manager.update_game(game, sid='2', result=True)
+            game_manager.update_game(game, sid='3', result=False)
+            game_manager.update_game(game, sid='4', result=False)
+            game_manager.update_game(game, sid='5', result=False)
+            game_manager.update_game(game, sid='6', result=False)
+            game_manager.update_game(game, sid=game.current_leader().sid, players_ids=[2, 3, 4])
+            game_manager.update_game(game, sid='1', result=True)
+            game_manager.update_game(game, sid='2', result=True)
+            game_manager.update_game(game, sid='3', result=True)
+            game_manager.update_game(game, sid='4', result=True)
+            game_manager.update_game(game, sid='5', result=False)
+            game_manager.update_game(game, sid='6', result=False)
+
+            game_manager.update_game(game, sid='2', result=False)
+            game_manager.update_game(game, sid='3', result=True)
+            game_manager.update_game(game, sid='4', result=True)
+
+            # 3
+            game_manager.update_game(game, sid=game.current_leader().sid, players_ids=[1, 2, 3, 4])
+            game_manager.update_game(game, sid='1', result=False)
+            game_manager.update_game(game, sid='2', result=True)
+            game_manager.update_game(game, sid='3', result=True)
+            game_manager.update_game(game, sid='4', result=True)
+            game_manager.update_game(game, sid='5', result=True)
+            game_manager.update_game(game, sid='6', result=False)
+
+            game_manager.update_game(game, sid='1', result=True)
+            game_manager.update_game(game, sid='2', result=True)
+            game_manager.update_game(game, sid='3', result=True)
+            game_manager.update_game(game, sid='4', result=True)
+
+            # 4
+            game_manager.update_game(game, sid=game.current_leader().sid, players_ids=[1, 3, 4])
+            game_manager.update_game(game, sid='1', result=False)
+            game_manager.update_game(game, sid='2', result=True)
+            game_manager.update_game(game, sid='3', result=True)
+            game_manager.update_game(game, sid='4', result=True)
+            game_manager.update_game(game, sid='5', result=True)
+            game_manager.update_game(game, sid='6', result=False)
+
+            game_manager.update_game(game, sid='1', result=True)
+            game_manager.update_game(game, sid='3', result=True)
+            game_manager.update_game(game, sid='4', result=True)
+
+            self.assertTrue(game.stage == model.GameStage.finished)
+            self.assertTrue(game.resistance_won is True)
+
+

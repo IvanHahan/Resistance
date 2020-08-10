@@ -403,6 +403,8 @@ class TestProdGameProgress(TestCase):
             game_manager.update_game(game, sid='4', result=True)
 
             # 4
+            # import json
+            # print(json.dumps(game.to_dict()))
             game_manager.update_game(game, sid=game.current_leader().sid, players_ids=[1, 3, 4])
             game_manager.update_game(game, sid='1', result=False)
             game_manager.update_game(game, sid='2', result=True)
@@ -417,5 +419,6 @@ class TestProdGameProgress(TestCase):
 
             self.assertTrue(game.stage == model.GameStage.finished)
             self.assertTrue(game.resistance_won is True)
+
 
 

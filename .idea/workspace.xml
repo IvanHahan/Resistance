@@ -3,6 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="237c5862-05fd-4826-8547-d26a07fc07aa" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rules/test_1.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_game_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_game_manager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -187,10 +190,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.app" />
+        <item itemvalue="Python tests.Unittests for test_game_manager.TestProdGameProgress.test_game_complete_resistance_won_success" />
         <item itemvalue="Python tests.Unittests for test_game_manager.TestGameProgress.test_second_mission_created" />
         <item itemvalue="Python tests.Unittests in test_game_manager.py" />
         <item itemvalue="Python tests.Unittests for test_game_manager.TestGameSetupStart.test_leave_game_started_success" />
-        <item itemvalue="Python tests.Unittests for test_game_manager.TestProdGameProgress.test_game_complete_resistance_won_success" />
       </list>
     </recent_temporary>
   </component>
@@ -247,14 +250,7 @@
       <workItem from="1596987800530" duration="2000" />
       <workItem from="1597038544289" duration="1479000" />
       <workItem from="1597040388737" duration="466000" />
-      <workItem from="1597051972241" duration="1658000" />
-    </task>
-    <task id="LOCAL-00001" summary="initial">
-      <created>1591384700596</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1591384700596</updated>
+      <workItem from="1597051972241" duration="3824000" />
     </task>
     <task id="LOCAL-00002" summary="WIP: add basic workflow">
       <created>1591435005070</created>
@@ -592,14 +588,20 @@
       <option name="project" value="LOCAL" />
       <updated>1597053349948</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="send leader id and host id instead of object">
+      <created>1597054057873</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1597054057880</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="change rules" />
     <MESSAGE value="add rules compliance" />
     <MESSAGE value="add minor changes" />
     <MESSAGE value="add converting to json" />
@@ -624,7 +626,8 @@
     <MESSAGE value="add logging" />
     <MESSAGE value="add services, add full game test" />
     <MESSAGE value="fix changing leader" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix changing leader" />
+    <MESSAGE value="send leader id and host id instead of object" />
+    <option name="LAST_COMMIT_MESSAGE" value="send leader id and host id instead of object" />
   </component>
   <component name="WindowStateProjectService">
     <state x="320" y="115" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1596196006129">
@@ -639,33 +642,33 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="408" y="193" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1440.900@0.0.1440.900" timestamp="1591526910804" />
-    <state x="303" y="52" key="CommitChangelistDialog2" timestamp="1597053349581">
+    <state x="303" y="52" key="CommitChangelistDialog2" timestamp="1597054057520">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="303" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1597053349581" />
+    <state x="303" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1597054057520" />
     <state x="100" y="100" width="1240" height="700" key="DiffContextDialog" timestamp="1594665505265">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="100" y="100" width="1240" height="700" key="DiffContextDialog/0.0.1440.900@0.0.1440.900" timestamp="1594665505265" />
-    <state width="1398" height="337" key="GridCell.Tab.0.bottom" timestamp="1597054041548">
+    <state width="1398" height="337" key="GridCell.Tab.0.bottom" timestamp="1597058586294">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="337" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1597054041548" />
+    <state width="1398" height="337" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1597058586294" />
     <state width="1398" height="230" key="GridCell.Tab.0.bottom/0.23.1440.812@0.23.1440.812" timestamp="1596987769295" />
-    <state width="1398" height="337" key="GridCell.Tab.0.center" timestamp="1597054041547">
+    <state width="1398" height="337" key="GridCell.Tab.0.center" timestamp="1597058586293">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="337" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1597054041547" />
+    <state width="1398" height="337" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1597058586293" />
     <state width="1398" height="230" key="GridCell.Tab.0.center/0.23.1440.812@0.23.1440.812" timestamp="1596987769294" />
-    <state width="1398" height="337" key="GridCell.Tab.0.left" timestamp="1597054041546">
+    <state width="1398" height="337" key="GridCell.Tab.0.left" timestamp="1597058586293">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="337" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1597054041546" />
+    <state width="1398" height="337" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1597058586293" />
     <state width="1398" height="230" key="GridCell.Tab.0.left/0.23.1440.812@0.23.1440.812" timestamp="1596987769293" />
-    <state width="1398" height="337" key="GridCell.Tab.0.right" timestamp="1597054041547">
+    <state width="1398" height="337" key="GridCell.Tab.0.right" timestamp="1597058586294">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="337" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1597054041547" />
+    <state width="1398" height="337" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1597058586294" />
     <state width="1398" height="230" key="GridCell.Tab.0.right/0.23.1440.812@0.23.1440.812" timestamp="1596987769295" />
     <state width="1398" height="204" key="GridCell.Tab.1.bottom" timestamp="1596635350653">
       <screen x="0" y="0" width="1440" height="900" />
@@ -691,19 +694,19 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="74" y="0" key="RollbackChangesDialog/0.0.1440.900@0.0.1440.900" timestamp="1595091811219" />
-    <state x="221" y="89" key="SettingsEditor" timestamp="1591379506587">
+    <state x="221" y="89" key="SettingsEditor" timestamp="1597059816822">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="221" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1591379506587" />
-    <state width="500" height="445" key="SwitcherDM" timestamp="1597054021284">
+    <state x="221" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1597059816822" />
+    <state width="500" height="445" key="SwitcherDM" timestamp="1597059864659">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1597054021284" />
+    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1597059864659" />
     <state width="500" height="445" key="SwitcherDM/0.23.1440.812@0.23.1440.812" timestamp="1596790059535" />
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1597053351477">
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1597054059817">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1597053351477" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1597054059817" />
     <state x="269" y="193" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1594646481312">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -757,7 +760,7 @@
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_game_manager_TestMissionMissionStage_test_mission_vote_disapprove_success.coverage" NAME="Unittests for test_game_manager.TestMissionMissionStage.test_mission_vote_disapprove_success Coverage Results" MODIFIED="1596799523918" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_model_TestGameMiddle_test_game_failed_troop_voting.coverage" NAME="Unittests for test_model.TestGameMiddle.test_game_failed_troop_voting Coverage Results" MODIFIED="1595252201431" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_game_manager_TestGameProgress_test_troop_vote_succes.coverage" NAME="Unittests for test_game_manager.TestGameProgress.test_troop_vote_succes Coverage Results" MODIFIED="1596701384005" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_game_manager_TestProdGameProgress_test_game_complete_resistance_won_success.coverage" NAME="Unittests for test_game_manager.TestProdGameProgress.test_game_complete_resistance_won_success Coverage Results" MODIFIED="1597039734650" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_game_manager_TestProdGameProgress_test_game_complete_resistance_won_success.coverage" NAME="Unittests for test_game_manager.TestProdGameProgress.test_game_complete_resistance_won_success Coverage Results" MODIFIED="1597057589483" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_game_TestGameMiddle_test_simulate_game_success.coverage" NAME="Unittests for test_game.TestGameMiddle.test_simulate_game_success Coverage Results" MODIFIED="1595261237797" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_game_manager_TestGameManager_test_join_game_full_fail.coverage" NAME="Unittests for test_game_manager.TestGameManager.test_join_game_full_fail Coverage Results" MODIFIED="1596630466917" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_game_manager_TestGameManager_test_leave_game_host_success.coverage" NAME="Unittests for test_game_manager.TestGameManager.test_leave_game_host_success Coverage Results" MODIFIED="1596628850920" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
@@ -776,7 +779,7 @@
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_game_manager_TestGameSetupStart_test_start_game_host_success.coverage" NAME="Unittests for test_game_manager.TestGameSetupStart.test_start_game_host_success Coverage Results" MODIFIED="1596699992823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_game_manager_TestMissionTroopStage_test_troop_vote_approve_success.coverage" NAME="Unittests for test_game_manager.TestMissionTroopStage.test_troop_vote_approve_success Coverage Results" MODIFIED="1596791634985" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_app_TestGame.coverage" NAME="Unittests for test_app.TestGame Coverage Results" MODIFIED="1594484762793" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/Resistance$app.coverage" NAME="app Coverage Results" MODIFIED="1597054041529" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Resistance$app.coverage" NAME="app Coverage Results" MODIFIED="1597058586270" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_in_test_game_py.coverage" NAME="Unittests in test_game.py Coverage Results" MODIFIED="1595763853722" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_model_TestModel_test_game_start_sufficient_players.coverage" NAME="Unittests for test_model.TestModel.test_game_start_sufficient_players Coverage Results" MODIFIED="1595225374966" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_game_TestGameMiddle_test_game_pause_resume.coverage" NAME="Unittests for test_game.TestGameMiddle.test_game_pause_resume Coverage Results" MODIFIED="1595258916529" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />

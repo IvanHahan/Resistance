@@ -1,2 +1,6 @@
 pyyaml
 flask
+gevent
+psycopg2
+flask-sqlalchemy
+flask-socketio

@@ -1,6 +1,6 @@
 from callbacks import socket_actions as actions
 from .model import *
-from services import db
+from app import db
 
 
 class RoundStage(enum.Enum):

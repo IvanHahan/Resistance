@@ -1,15 +1,23 @@
-from logging import getLogger
-
-import yaml
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_socketio import SocketIO
+import yaml
+from flasgger import Swagger
+import logging
 
-from logger import set_global_config
-from services import db, socketio, swagger
+db = SQLAlchemy()
+socketio = SocketIO()
+swagger = Swagger()
+
 from events import *
+from game_manager import GameManager
+game_manager = GameManager()
+handlers = [logging.StreamHandler()]
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", handlers=handlers)
 
 
 def create_app(config='config.Debug'):
-    global game_manager, event_logger
+    global game_manager
 
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'secret!'
@@ -19,9 +27,6 @@ def create_app(config='config.Debug'):
     db.init_app(app)
     socketio.init_app(app, cors_allowed_origins="*")
     swagger.init_app(app)
-
-    set_global_config()
-    event_logger = getLogger('Events')
 
     with app.app_context():
         db.drop_all()

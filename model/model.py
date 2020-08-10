@@ -2,7 +2,7 @@ import enum
 
 import numpy as np
 
-from services import db
+from app import db
 
 
 player_mission_association = db.Table('player_mission', db.metadata,

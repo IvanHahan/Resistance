@@ -2,10 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="237c5862-05fd-4826-8547-d26a07fc07aa" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/events/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/events/game.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rules/test_1.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_game_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_game_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/events/lobby.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logger.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/mission.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/mission.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -250,14 +256,7 @@
       <workItem from="1596987800530" duration="2000" />
       <workItem from="1597038544289" duration="1479000" />
       <workItem from="1597040388737" duration="466000" />
-      <workItem from="1597051972241" duration="3824000" />
-    </task>
-    <task id="LOCAL-00002" summary="WIP: add basic workflow">
-      <created>1591435005070</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1591435005070</updated>
+      <workItem from="1597051972241" duration="5217000" />
     </task>
     <task id="LOCAL-00003" summary="update workflow&#10;connect socketIO">
       <created>1591443593892</created>
@@ -595,14 +594,20 @@
       <option name="project" value="LOCAL" />
       <updated>1597054057880</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="remove unneededd files">
+      <created>1597059876593</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1597059876594</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add rules compliance" />
     <MESSAGE value="add minor changes" />
     <MESSAGE value="add converting to json" />
     <MESSAGE value="complete game flow" />
@@ -627,7 +632,8 @@
     <MESSAGE value="add services, add full game test" />
     <MESSAGE value="fix changing leader" />
     <MESSAGE value="send leader id and host id instead of object" />
-    <option name="LAST_COMMIT_MESSAGE" value="send leader id and host id instead of object" />
+    <MESSAGE value="remove unneededd files" />
+    <option name="LAST_COMMIT_MESSAGE" value="remove unneededd files" />
   </component>
   <component name="WindowStateProjectService">
     <state x="320" y="115" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1596196006129">
@@ -642,33 +648,33 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="408" y="193" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1440.900@0.0.1440.900" timestamp="1591526910804" />
-    <state x="303" y="52" key="CommitChangelistDialog2" timestamp="1597054057520">
+    <state x="303" y="52" key="CommitChangelistDialog2" timestamp="1597059876237">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="303" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1597054057520" />
+    <state x="303" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1597059876237" />
     <state x="100" y="100" width="1240" height="700" key="DiffContextDialog" timestamp="1594665505265">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="100" y="100" width="1240" height="700" key="DiffContextDialog/0.0.1440.900@0.0.1440.900" timestamp="1594665505265" />
-    <state width="1398" height="337" key="GridCell.Tab.0.bottom" timestamp="1597058586294">
+    <state width="1398" height="337" key="GridCell.Tab.0.bottom" timestamp="1597061691954">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="337" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1597058586294" />
+    <state width="1398" height="337" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1597061691954" />
     <state width="1398" height="230" key="GridCell.Tab.0.bottom/0.23.1440.812@0.23.1440.812" timestamp="1596987769295" />
-    <state width="1398" height="337" key="GridCell.Tab.0.center" timestamp="1597058586293">
+    <state width="1398" height="337" key="GridCell.Tab.0.center" timestamp="1597061691952">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="337" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1597058586293" />
+    <state width="1398" height="337" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1597061691952" />
     <state width="1398" height="230" key="GridCell.Tab.0.center/0.23.1440.812@0.23.1440.812" timestamp="1596987769294" />
-    <state width="1398" height="337" key="GridCell.Tab.0.left" timestamp="1597058586293">
+    <state width="1398" height="337" key="GridCell.Tab.0.left" timestamp="1597061691952">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="337" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1597058586293" />
+    <state width="1398" height="337" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1597061691952" />
     <state width="1398" height="230" key="GridCell.Tab.0.left/0.23.1440.812@0.23.1440.812" timestamp="1596987769293" />
-    <state width="1398" height="337" key="GridCell.Tab.0.right" timestamp="1597058586294">
+    <state width="1398" height="337" key="GridCell.Tab.0.right" timestamp="1597061691953">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1398" height="337" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1597058586294" />
+    <state width="1398" height="337" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1597061691953" />
     <state width="1398" height="230" key="GridCell.Tab.0.right/0.23.1440.812@0.23.1440.812" timestamp="1596987769295" />
     <state width="1398" height="204" key="GridCell.Tab.1.bottom" timestamp="1596635350653">
       <screen x="0" y="0" width="1440" height="900" />
@@ -698,15 +704,15 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="221" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1597059816822" />
-    <state width="500" height="445" key="SwitcherDM" timestamp="1597059864659">
+    <state width="500" height="445" key="SwitcherDM" timestamp="1597061652249">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1597059864659" />
+    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1597061652249" />
     <state width="500" height="445" key="SwitcherDM/0.23.1440.812@0.23.1440.812" timestamp="1596790059535" />
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1597054059817">
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1597059878799">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1597054059817" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1597059878799" />
     <state x="269" y="193" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1594646481312">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -779,7 +785,7 @@
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_game_manager_TestGameSetupStart_test_start_game_host_success.coverage" NAME="Unittests for test_game_manager.TestGameSetupStart.test_start_game_host_success Coverage Results" MODIFIED="1596699992823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_game_manager_TestMissionTroopStage_test_troop_vote_approve_success.coverage" NAME="Unittests for test_game_manager.TestMissionTroopStage.test_troop_vote_approve_success Coverage Results" MODIFIED="1596791634985" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_app_TestGame.coverage" NAME="Unittests for test_app.TestGame Coverage Results" MODIFIED="1594484762793" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/Resistance$app.coverage" NAME="app Coverage Results" MODIFIED="1597058586270" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Resistance$app.coverage" NAME="app Coverage Results" MODIFIED="1597061691945" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_in_test_game_py.coverage" NAME="Unittests in test_game.py Coverage Results" MODIFIED="1595763853722" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_model_TestModel_test_game_start_sufficient_players.coverage" NAME="Unittests for test_model.TestModel.test_game_start_sufficient_players Coverage Results" MODIFIED="1595225374966" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/Resistance$Unittests_for_test_game_TestGameMiddle_test_game_pause_resume.coverage" NAME="Unittests for test_game.TestGameMiddle.test_game_pause_resume Coverage Results" MODIFIED="1595258916529" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />

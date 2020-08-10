@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 
 import errors
 import model
-from services import db
+from app import db
 from callbacks import socket_actions as actions
 
 

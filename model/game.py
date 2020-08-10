@@ -130,8 +130,8 @@ class Game(db.Model):
         }
         if include_details:
             obj['details'] = {
-                'leader': self.current_leader().to_dict() if self.current_leader() is not None else None,
-                'host': self.host.to_dict(),
+                'leader_id': self.current_leader().id if self.current_leader() is not None else None,
+                'host_id': self.host.id,
                 'players': [player.to_dict() for player in self.players],
                 'missions': [mission.to_dict() for mission in self.missions],
                 'resistance_won': self.resistance_won,

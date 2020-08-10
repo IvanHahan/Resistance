@@ -201,14 +201,12 @@ class GameManager:
             return actions.MissionUpdated(mission.game_id, mission.to_dict())
 
     def _handle_proposal_request(self, mission, **kwargs):
-        if 'players_ids' in kwargs:
-            mission.next()
-            return self.update_mission(mission, **kwargs)
+        mission.game.next_leader()
+        mission.next()
         return actions.MissionUpdated(mission.game, mission.to_dict())
 
     def _handle_troop_proposal(self, mission, **kwargs):
         target_players = self.rules['team'][len(mission.game.players)]['mission_team'][len(mission.game.missions) - 1]
-
         if 'players_ids' not in kwargs:
             raise errors.InvalidPlayersNumber(0, target_players)
         elif kwargs['sid'] != mission.game.current_leader().sid:

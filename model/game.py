@@ -1,4 +1,5 @@
 from .mission import *
+import errors
 
 
 class GameStage(enum.Enum):
@@ -57,6 +58,8 @@ class Game(db.Model):
             else:
                 self.players[i].role = Role.resistance
 
+        self._leader_idx = np.random.randint(0, len(self.players))
+
     def _complete_game(self):
         fail_missions = len([mission for mission in self.missions if mission.voting.result is False])
         success_missions = len([mission for mission in self.missions if mission.voting.result is True])
@@ -75,7 +78,7 @@ class Game(db.Model):
         return self.missions[-1].current_voting()
 
     def next_leader(self):
-        if self._leader_idx == len(self.players) - 1:
+        if self._leader_idx >= len(self.players) - 1:
             self._leader_idx = 0
         else:
             self._leader_idx += 1
@@ -83,7 +86,10 @@ class Game(db.Model):
         return leader
 
     def current_leader(self):
-        return self.players[self._leader_idx]
+        try:
+            return self.players[self._leader_idx]
+        except IndexError:
+            return None
 
     def update(self, mission_state=None, **kwargs):
         return self.update_for_state(self.stage, mission_state, **kwargs)
@@ -124,7 +130,7 @@ class Game(db.Model):
         }
         if include_details:
             obj['details'] = {
-                'leader': self.current_leader().to_dict(),
+                'leader': self.current_leader().to_dict() if self.current_leader() is not None else None,
                 'host': self.host.to_dict(),
                 'players': [player.to_dict() for player in self.players],
                 'missions': [mission.to_dict() for mission in self.missions],

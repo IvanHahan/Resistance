@@ -2,9 +2,8 @@ import errors
 import model
 from unittest import TestCase
 from app import create_app, db, game_manager
-from game_manager import GameManager
-from sqlalchemy.exc import IntegrityError
-from callbacks import socket_actions as actions
+import numpy as np
+np.random.seed(12)
 
 
 class TestGameSetupStart(TestCase):
@@ -170,7 +169,7 @@ class TestMissionTroopStage(TestCase):
         with self.app.app_context():
             game = game_manager.request_game(self.game_id)
             mission = game.current_mission()
-            self.assertTrue(mission.stage == model.RoundStage.proposal_request)
+            self.assertTrue(mission.stage == model.RoundStage.troop_proposal)
 
     def test_troop_proposal_success(self):
         with self.app.app_context():
@@ -194,7 +193,7 @@ class TestMissionTroopStage(TestCase):
         with self.app.app_context():
             game = game_manager.request_game(self.game_id)
             with self.assertRaises(errors.InvalidPlayersNumber):
-                game_manager.update_mission(game.current_mission(), sid='3', players_ids=[1, 2])
+                game_manager.update_mission(game.current_mission(), sid=game.current_leader().sid, players_ids=[1, 2])
             self.assertTrue(game.current_mission().stage == model.RoundStage.troop_proposal)
 
     def test_troop_vote_approve_success(self):
@@ -228,7 +227,20 @@ class TestMissionTroopStage(TestCase):
             game_manager.update_mission(mission, sid='1', result=True)
             game_manager.update_mission(mission, sid='2', result=False)
             game_manager.update_mission(mission, sid='3', result=False)
-            self.assertTrue(mission.stage == model.RoundStage.proposal_request)
+            self.assertTrue(mission.stage == model.RoundStage.troop_proposal)
+            self.assertTrue(mission.troop_proposals[-1].voting.result is False)
+
+    def test_troop_vote_disapprove_success(self):
+        with self.app.app_context():
+            game = game_manager.request_game(self.game_id)
+            mission = game.current_mission()
+            game_leader_sid = game.current_leader().sid
+            game_manager.update_mission(mission, sid=game.current_leader().sid, players_ids=[1])
+            game_manager.update_mission(mission, sid='1', result=True)
+            game_manager.update_mission(mission, sid='2', result=False)
+            game_manager.update_mission(mission, sid='3', result=False)
+            self.assertTrue(game.current_leader().sid != game_leader_sid)
+            self.assertTrue(mission.stage == model.RoundStage.troop_proposal)
             self.assertTrue(mission.troop_proposals[-1].voting.result is False)
 
 
@@ -294,12 +306,15 @@ class TestGameProgress(TestCase):
     def test_second_mission_created(self):
         with self.app.app_context():
             game = game_manager.request_game(self.game_id)
+            current_leader_sid = game.current_leader().sid
             game_manager.update_game(game, sid=game.current_leader().sid, players_ids=[1])
             game_manager.update_game(game, sid='1', result=True)
             game_manager.update_game(game, sid='2', result=True)
             game_manager.update_game(game, sid='3', result=True)
             game_manager.update_game(game, sid='1', result=True)
             self.assertTrue(len(game.missions) == 2)
+            self.assertTrue(len(game.missions) == 2)
+            self.assertTrue(game.current_leader().sid != current_leader_sid)
 
     def test_game_complete_resistance_won_success(self):
         with self.app.app_context():

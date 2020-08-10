@@ -2,22 +2,12 @@ from flask import request
 from flask_socketio import send, join_room, leave_room, emit
 
 import errors
-import model
-from services import db, socketio, event_logger, game_manager
+from services import socketio, event_logger, game_manager
 
 
 @socketio.on('connect', namespace='/lobby')
 def connect():
-    print('pidor connected')
-    event_logger.info('connected ' + request.sid)
-    send('connected')
-
-@socketio.on('pidor', namespace='/lobby')
-def pidor(sfd):
-    print('pidor')
-    event_logger.info('connected ' + request.sid)
-    print(game_manager)
-
+    return 'connected'
 
 @socketio.on('query_games', namespace='/lobby')
 def query_games(info):
@@ -27,7 +17,6 @@ def query_games(info):
 
 @socketio.on('join_game', namespace='/lobby')
 def on_join(info):
-    event_logger.info('join_game ' + request.sid)
     game_id = info['game_id']
     username = info['username']
     try:
@@ -43,7 +32,6 @@ def on_join(info):
 
 @socketio.on('leave_game', namespace='/game')
 def on_leave(info):
-    event_logger.info('leave_game ' + request.sid)
     game_id = info['game_id']
     player_id = info['player_id']
     try:
@@ -62,7 +50,6 @@ def on_leave(info):
 
 @socketio.on('start_game', namespace='/game')
 def on_start(info):
-    event_logger.info('start_game ' + request.sid)
     game_id = info['game_id']
     try:
         game = game_manager.request_game(game_id)
@@ -76,7 +63,6 @@ def on_start(info):
 @socketio.on('create_game', namespace='/lobby')
 def on_create_game(info):
     username = info['username']
-    event_logger.info('create_game ' + request.sid)
     try:
         game = game_manager.create_game(username, request.sid)
         game_manager.join_game(game.id, 'liza', '1')
@@ -93,7 +79,6 @@ def on_create_game(info):
 @socketio.on('delete_game', namespace='/game')
 def on_delete_game(info):
     game_id = info['game_id']
-    event_logger.info('delete_game ' + request.sid)
     try:
         game_manager.delete_game(game_id, request.sid)
         emit('game_updated', 'Game deleted', room=game_id)
@@ -109,7 +94,6 @@ def on_delete_game(info):
 def on_proposal(info):
     game_id = info['game_id']
     players_ids = info['players_id']
-    event_logger.info('make_proposal ' + request.sid)
     try:
         game = game_manager.request_player(game_id)
         game_manager.update_game(game, players_ids=players_ids, sid=request.sid)
@@ -122,7 +106,6 @@ def on_proposal(info):
 def on_vote(info):
     result = info['result']
     game_id = info['game_id']
-    event_logger.info('vote ' + request.sid)
     try:
         game = game_manager.request_player(game_id)
         game_manager.update_game(game, result=result, sid=request.sid).execute()

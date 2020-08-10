@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+
+  web:
+    container_name: web
+    build: .
+    ports:
+      - 5000:5000
+    depends_on:
+      - db
+    networks:
+      - resistance
+    restart: always
+
+  db:
+    image: postgres:latest
+    container_name: db
+    volumes:
+      - $HOME/docker/volumes/postgres/:/var/lib/postgresql/data
+    ports:
+      - 5405:5432
+    restart: always
+    networks:
+      - resistance
+    environment:
+      - POSTGRES_USER=resistance
+      - POSTGRES_PASSWORD=fo23h5iu32h5i324uhiuh5324
+      - POSTGRES_DB=resistance
+
+networks:
+  resistance:

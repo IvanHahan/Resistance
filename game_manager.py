@@ -280,3 +280,6 @@ class GameManager:
         mission.next()
         db.session.commit()
         return self.update_mission(mission, **kwargs)
+
+
+shared = GameManager()

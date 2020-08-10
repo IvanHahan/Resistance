@@ -8,12 +8,10 @@ import logging
 db = SQLAlchemy()
 socketio = SocketIO()
 swagger = Swagger()
-
-from events import *
-from game_manager import GameManager
-game_manager = GameManager()
 handlers = [logging.StreamHandler()]
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", handlers=handlers)
+
+from events import *
 
 
 def create_app(config='config.Debug'):
@@ -40,6 +38,7 @@ def create_app(config='config.Debug'):
 
 
 if __name__ == '__main__':
+
     app = create_app()
 
     socketio.run(app, host='192.168.0.102', port=5000)

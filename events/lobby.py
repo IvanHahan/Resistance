@@ -1,8 +1,9 @@
 from flask import request
-from flask_socketio import send, join_room, leave_room, emit
+from flask_socketio import join_room, emit
 
 import errors
-from app import socketio, game_manager
+from app import socketio
+from game_manager import shared as game_manager
 
 
 @socketio.on('connect', namespace='/lobby')

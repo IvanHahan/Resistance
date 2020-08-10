@@ -2,7 +2,9 @@ from flask import request
 from flask_socketio import leave_room, emit
 
 import errors
-from app import socketio, game_manager
+from app import socketio
+from game_manager import shared as game_manager
+
 
 
 @socketio.on('leave_game', namespace='/game')

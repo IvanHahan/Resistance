@@ -11,6 +11,9 @@ services:
     networks:
       - resistance
     restart: always
+    environment:
+      - APP_CONFIG=Docker
+      - PORT=5000
 
   db:
     image: postgres:latest

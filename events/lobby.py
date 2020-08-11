@@ -36,8 +36,6 @@ def on_create_game(info):
     username = info['username']
     try:
         game = game_manager.create_game(username, request.sid)
-        game_manager.join_game(game.id, 'liza', '1')
-        game_manager.join_game(game.id, 'ivan2', '2')
         join_room(game.id, namespace='/game')
         emit('game_list', [game.to_dict(False) for game in game_manager.request_games()],
              broadcast=True)

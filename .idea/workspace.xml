@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="237c5862-05fd-4826-8547-d26a07fc07aa" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
     </list>
@@ -250,14 +248,7 @@
       <workItem from="1596987800530" duration="2000" />
       <workItem from="1597038544289" duration="1479000" />
       <workItem from="1597040388737" duration="466000" />
-      <workItem from="1597051972241" duration="23821000" />
-    </task>
-    <task id="LOCAL-00007" summary="fix adding and deleting user">
-      <created>1591616734446</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1591616734446</updated>
+      <workItem from="1597051972241" duration="24155000" />
     </task>
     <task id="LOCAL-00008" summary="fix adding and deleting user">
       <created>1591617422241</created>
@@ -595,14 +586,20 @@
       <option name="project" value="LOCAL" />
       <updated>1597076703871</updated>
     </task>
-    <option name="localTasksCounter" value="56" />
+    <task id="LOCAL-00056" summary="fixed db">
+      <created>1597124347795</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1597124347795</updated>
+    </task>
+    <option name="localTasksCounter" value="57" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add logic for leaving game in the middle" />
     <MESSAGE value="add actions layer" />
     <MESSAGE value="add model tests" />
     <MESSAGE value="make the whole pipeline through game class" />
@@ -627,7 +624,8 @@
     <MESSAGE value="refactor. make events folder" />
     <MESSAGE value="refactor" />
     <MESSAGE value="add ddocker" />
-    <option name="LAST_COMMIT_MESSAGE" value="add ddocker" />
+    <MESSAGE value="fixed db" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed db" />
   </component>
   <component name="WindowStateProjectService">
     <state x="320" y="115" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1596196006129">
@@ -642,10 +640,10 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="408" y="193" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1440.900@0.0.1440.900" timestamp="1591526910804" />
-    <state x="303" y="52" key="CommitChangelistDialog2" timestamp="1597076703447">
+    <state x="303" y="52" key="CommitChangelistDialog2" timestamp="1597124347586">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="303" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1597076703447" />
+    <state x="303" y="52" key="CommitChangelistDialog2/0.0.1440.900@0.0.1440.900" timestamp="1597124347586" />
     <state x="100" y="100" width="1240" height="700" key="DiffContextDialog" timestamp="1597124070129">
       <screen x="0" y="23" width="1440" height="812" />
     </state>
@@ -699,15 +697,15 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="221" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1597059816822" />
-    <state width="500" height="445" key="SwitcherDM" timestamp="1597123750990">
+    <state width="500" height="445" key="SwitcherDM" timestamp="1597124585874">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1597123750990" />
+    <state width="500" height="445" key="SwitcherDM/0.0.1440.900@0.0.1440.900" timestamp="1597124585874" />
     <state width="500" height="445" key="SwitcherDM/0.23.1440.812@0.23.1440.812" timestamp="1596790059535" />
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1597076705261">
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2" timestamp="1597124350413">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1597076705261" />
+    <state x="320" y="190" key="Vcs.Push.Dialog.v2/0.0.1440.900@0.0.1440.900" timestamp="1597124350413" />
     <state x="269" y="193" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1594646481312">
       <screen x="0" y="0" width="1440" height="900" />
     </state>

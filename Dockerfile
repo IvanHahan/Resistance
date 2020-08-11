@@ -10,4 +10,4 @@ RUN pip install --upgrade pip; \
 
 EXPOSE 5000/tcp
 
-ENTRYPOINT [ "gunicorn", "run:app", "-k=gevent", "-b=192.168.0.102:5000" ]
+ENTRYPOINT [ "gunicorn", "run:app", "-k=gevent", "-b=0.0.0.0:5000" ]

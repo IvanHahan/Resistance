@@ -9,7 +9,7 @@ services:
     depends_on:
       - db
     networks:
-      - resistance
+      - default
     restart: always
 
   db:
@@ -20,12 +20,13 @@ services:
     ports:
       - 5405:5432
     restart: always
-    networks:
-      - resistance
     environment:
       - POSTGRES_USER=resistance
-      - POSTGRES_PASSWORD=fo23h5iu32h5i324uhiuh5324
-      - POSTGRES_DB=resistance
+      - POSTGRES_PASSWORD=kjuyguyf24234cvbinm523b5yt6
+      - POSTGRES_DB=resistance, resistance_test
+      - POSTGRES_DBNAME=resistance, resistance_test
+    networks:
+      - default
 
 networks:
-  resistance:
+  default:

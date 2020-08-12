@@ -30,7 +30,6 @@ def create_app(config='config.Debug'):
     with app.app_context():
         db.drop_all()
         db.create_all()
-        db.session.commit()
 
     with open(app.config['RULES_PATH'], 'r') as stream:
         rules = yaml.safe_load(stream)

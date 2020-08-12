@@ -252,6 +252,11 @@ class GameManager:
             db.session.commit()
             return actions.MissionUpdated(mission.game_id, mission.to_dict())
         else:
+            if len(mission.troop_proposals) >= self.rules['proposals_to_lose']:
+                mission.game.stage = model.GameStage.finished
+                mission.game.resistance_won = False
+                db.session.commit()
+                return actions.GameUpdated(mission.game.to_dict())
             mission._stage = model.RoundStage.proposal_request
             db.session.commit()
             return self.update_mission(mission, **kwargs)

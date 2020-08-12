@@ -53,8 +53,8 @@ def on_proposal(info):
     game_id = info['game_id']
     players_ids = info['players_id']
     try:
-        game = game_manager.request_player(game_id)
-        game_manager.update_game(game, players_ids=players_ids, sid=request.sid)
+        game = game_manager.request_game(game_id)
+        game_manager.update_game(game, players_ids=players_ids, sid=request.sid).execute()
         return 'Proposal made'
     except errors.GameError as err:
         return str(err)
@@ -65,7 +65,7 @@ def on_vote(info):
     result = info['result']
     game_id = info['game_id']
     try:
-        game = game_manager.request_player(game_id)
+        game = game_manager.request_game(game_id)
         game_manager.update_game(game, result=result, sid=request.sid).execute()
         return 'Vote made'
     except errors.GameError as err:

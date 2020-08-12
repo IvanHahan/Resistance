@@ -61,8 +61,9 @@ class Game(db.Model):
         self._leader_idx = np.random.randint(0, len(self.players))
 
     def _complete_game(self):
-        fail_missions = len([mission for mission in self.missions if mission.voting.result is False])
-        success_missions = len([mission for mission in self.missions if mission.voting.result is True])
+
+        fail_missions = len([mission for mission in self.missions if mission.resistance_won is False])
+        success_missions = len([mission for mission in self.missions if mission.resistance_won is True])
         if fail_missions == self.missions_to_win:
             self.resistance_won = False
             return True

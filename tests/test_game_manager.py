@@ -232,7 +232,7 @@ class TestMissionTroopStage(TestCase):
             self.assertTrue(mission.troop_proposals[-1].voting.result is False)
             self.assertTrue(game.current_leader().sid != game_leader_sid)
 
-    def test_troop_vote_disapprove_game_lose_success(self):
+    def test_troop_vote_disapprove_mission_lose_success(self):
         with self.app.app_context():
             game = game_manager.request_game(self.game_id)
             mission = game.current_mission()
@@ -246,8 +246,8 @@ class TestMissionTroopStage(TestCase):
             game_manager.update_mission(mission, sid='2', result=False)
             game_manager.update_mission(mission, sid='3', result=False)
 
-            self.assertTrue(game.stage == model.GameStage.finished)
-            self.assertTrue(game.resistance_won is False)
+            self.assertTrue(mission.stage == model.RoundStage.mission_results)
+            self.assertTrue(mission.resistance_won is False)
 
 
 class TestMissionMissionStage(TestCase):

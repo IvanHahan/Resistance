@@ -56,6 +56,12 @@ class GameNotFound(GameError):
         super().__init__(f'Game not found')
 
 
+class GameFinished(GameError):
+    def __init__(self):
+        super().__init__(f'Game finished')
+
+
+
 class ForbiddenAction(GameError):
     def __init__(self):
         super().__init__(f'You are not allowed to do that')

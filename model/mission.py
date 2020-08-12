@@ -21,6 +21,7 @@ class Mission(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     index = db.Column(db.Integer, nullable=False, unique=False)
+    resistance_won = db.Column(db.Boolean, nullable=True)
     _stage = db.Column(db.Enum(RoundStage), default=RoundStage.proposal_request, nullable=False)
 
     voting_id = db.Column(db.Integer, db.ForeignKey('votings.id'), nullable=True)
@@ -139,6 +140,7 @@ class Mission(db.Model):
             'id': self.id,
             'index': self.index,
             'stage': self.stage.name,
+            'resistance_won': self.resistance_won,
             'game_id': self.game_id,
             'proposals': [tp.to_dict() for tp in self.troop_proposals],
             'voting': self.voting.to_dict() if self.voting is not None else None

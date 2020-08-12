@@ -123,6 +123,8 @@ class GameManager:
             return self._handle_start_mission(game, **kwargs)
         elif game.stage == model.GameStage.executing_mission:
             return self._handle_executing_mission(game, **kwargs)
+        elif game.stage == model.GameStage.finished:
+            raise errors.GameFinished()
 
     def _reset_game(self, game):
         game.stage = model.GameStage.pending
@@ -252,8 +254,8 @@ class GameManager:
             return actions.MissionUpdated(mission.game_id, mission.to_dict())
         else:
             if len(mission.troop_proposals) >= self.rules['proposals_to_lose']:
-                mission.game.stage = model.GameStage.finished
-                mission.game.resistance_won = False
+                mission._stage = model.RoundStage.mission_results
+                mission.resistance_won = False
                 db.session.commit()
                 return actions.GameUpdated(mission.game.to_dict())
             mission._stage = model.RoundStage.proposal_request
@@ -281,6 +283,7 @@ class GameManager:
     def _handle_mission_voting_result(self, mission, **kwargs):
         voting = mission.voting
         voting.result = np.bitwise_not([vote.result for vote in voting.votes]).sum() < mission.num_of_fails
+        mission.resistance_won = voting.result
         mission.next()
         db.session.commit()
         return self.update_mission(mission, **kwargs)

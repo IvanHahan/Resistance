@@ -101,7 +101,6 @@ class GameManager:
 
     @db_commit
     def delete_game(self, game_id, sid):
-
         player_id = db.session.query(model.Player.id).filter(db.and_(model.Player.sid == sid,
                                                                      model.Player.game_id == game_id)).first()
 
@@ -147,7 +146,7 @@ class GameManager:
         return self.update_game(game, **kwargs)
 
     def _handle_start_mission(self, game, **kwargs):
-        _ = self._create_mission(game.id, len(game.players), len(game.missions) - 1)
+        _ = self._create_mission(game.id, len(game.players), len(game.missions))
         game.next()
         db.session.commit()
         return self.update_game(game, **kwargs)
@@ -166,7 +165,7 @@ class GameManager:
         return actions.GameUpdated(game.to_dict())
 
     def _create_mission(self, game_id, num_players, index):
-        mission = model.Mission(game_id=game_id,
+        mission = model.Mission(game_id=game_id, index=index,
                                 num_of_fails=self.rules['team'][num_players]['fails_num'][index])
         db.session.add(mission)
         return mission

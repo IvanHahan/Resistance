@@ -46,6 +46,21 @@ team:
       - 1
       - 1
       - 1
+  4:
+    spies: 1
+    resistance: 3
+    mission_team:
+      - 2
+      - 2
+      - 2
+      - 3
+      - 3
+    fails_num:
+      - 1
+      - 1
+      - 1
+      - 1
+      - 1
   5:
     spies: 2
     resistance: 3

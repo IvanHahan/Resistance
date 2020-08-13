@@ -93,7 +93,7 @@ def on_create_game(info):
         game = game_manager.create_game(username, request.sid)
         join_room(game.id, namespace='/game')
         emit('game_list', [game.to_dict(False) for game in game_manager.request_games()],
-             broadcast=True)
+             broadcast=True, namespace='/lobby')
         return {'game': game.to_dict(), 'player': game.host.to_dict()}
     except errors.GameError as err:
         return str(err)

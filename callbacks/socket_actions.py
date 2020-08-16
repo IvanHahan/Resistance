@@ -3,20 +3,20 @@ import model
 
 
 class Callback:
-    def __init__(self, game_id):
-        self.game_id = game_id
+    def __init__(self, room_id):
+        self.room_id = room_id
 
     def execute(self):
         pass
 
 
 class GameUpdated(Callback):
-    def __init__(self, game_dict):
-        super().__init__(game_dict['id'])
+    def __init__(self, game_dict, room_id):
+        super().__init__(room_id)
         self.game_dict = game_dict
 
     def execute(self):
-        emit('game_updated', self.game_dict, room=self.game_id, namespace='/game')
+        emit('game_updated', self.game_dict, room=self.room_id, namespace='/game')
 
 
 class MissionUpdated(Callback):
@@ -25,7 +25,7 @@ class MissionUpdated(Callback):
         self.mission_dict = mission_dict
 
     def execute(self):
-        emit('mission_updated', self.mission_dict, room=self.game_id)
+        emit('mission_updated', self.mission_dict, room=self.room_id)
 
 
 class QueryProposal(Callback):
@@ -37,7 +37,7 @@ class QueryProposal(Callback):
     def execute(self):
         emit('query_proposal', {'leader_id': self.leader_id,
                                 'troop_size': self.troop_size
-                                }, room=self.game_id)
+                                }, room=self.room_id)
 
 
 class StartVoting(Callback):
@@ -48,7 +48,7 @@ class StartVoting(Callback):
 
     def execute(self):
         emit('start_voting', {'candidates': self.candidates,
-                              'voters': self.voters}, room=self.game_id)
+                              'voters': self.voters}, room=self.room_id)
 
 
 class MissionComplete(Callback):
@@ -62,4 +62,4 @@ class MissionComplete(Callback):
 
 class GameDeleted(Callback):
     def execute(self):
-        emit('game_updated', 'Game deleted', room=self.game_id, namespace='/game')
+        emit('game_updated', 'Game deleted', room=self.room_id, namespace='/game')

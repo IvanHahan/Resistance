@@ -5,14 +5,27 @@ import numpy as np
 from app import db
 
 
+player_game_association = db.Table('player_game', db.metadata,
+                                       db.Column('player_id', db.Integer, db.ForeignKey('players.id', ondelete='cascade'), nullable=False),
+                                       db.Column('game_id', db.Integer, db.ForeignKey('games.id', ondelete='cascade'),
+                                                 nullable=False),
+                                       )
+
+
 player_mission_association = db.Table('player_mission', db.metadata,
-                                      db.Column('player_id', db.Integer, db.ForeignKey('players.id'), nullable=False),
-                                      db.Column('mission_id', db.Integer, db.ForeignKey('missions.id'), nullable=False),
+                                      db.Column('player_id', db.Integer,
+                                                db.ForeignKey('players.id', ondelete='cascade'),
+                                                nullable=False),
+                                      db.Column('mission_id', db.Integer,
+                                                db.ForeignKey('missions.id', ondelete='cascade'),
+                                                nullable=False),
                                       )
 
 player_proposal_association = db.Table('player_proposal', db.metadata,
-                                       db.Column('player_id', db.Integer, db.ForeignKey('players.id'), nullable=False),
-                                       db.Column('troop_proposal_id', db.Integer, db.ForeignKey('troop_proposals.id'),
+                                       db.Column('player_id', db.Integer,
+                                                 db.ForeignKey('players.id', ondelete='cascade'),
+                                                 nullable=False),
+                                       db.Column('troop_proposal_id', db.Integer, db.ForeignKey('troop_proposals.id', ondelete='cascade'),
                                                  nullable=False),
                                        )
 
@@ -35,7 +48,9 @@ class Player(db.Model):
     role = db.Column(db.Enum(Role), nullable=True)
 
     game_id = db.Column(db.Integer, db.ForeignKey('games.id', name='fk_game_id', ondelete='cascade'), nullable=True)
-    game = db.relationship('Game', uselist=False, back_populates='players', foreign_keys=[game_id], single_parent=True)
+    game = db.relationship('Game', uselist=False, foreign_keys=[game_id])
+    games = db.relationship('Game', uselist=True, secondary=player_game_association, back_populates='players',
+                            cascade='all, delete')
 
     def to_dict(self):
         return {
@@ -57,7 +72,7 @@ class TroopProposal(db.Model):
 
     members = db.relationship('Player', uselist=True, secondary=player_proposal_association)
     proposer = db.relationship('Player', uselist=False)
-    voting = db.relationship('Voting', uselist=False, cascade='all, delete-orphan', single_parent=True)
+    voting = db.relationship('Voting', uselist=False, cascade='all, delete', single_parent=True)
     mission = db.relationship('Mission', uselist=False)
 
     def to_dict(self):
@@ -76,7 +91,7 @@ class Voting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     result = db.Column(db.Boolean, nullable=True)
 
-    votes = db.relationship('Vote', uselist=True, back_populates='voting', cascade='all, delete-orphan')
+    votes = db.relationship('Vote', uselist=True, back_populates='voting', cascade='all, delete')
 
     def is_complete(self):
         return np.bitwise_and.reduce([vote.result is not None for vote in self.votes])

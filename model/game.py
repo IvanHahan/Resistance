@@ -1,5 +1,7 @@
 from .mission import *
 import errors
+from app import db
+from .model import *
 
 
 class GameStage(enum.Enum):
@@ -29,8 +31,8 @@ class Game(db.Model):
     host_id = db.Column(db.Integer, db.ForeignKey('players.id', use_alter=True, name='fk_host_id', ondelete='cascade'), nullable=True)
 
     host = db.relationship('Player', uselist=False, foreign_keys=[host_id], post_update=True)
-    players = db.relationship('Player', uselist=True, back_populates='game', cascade='all, delete',
-                              foreign_keys='[Player.game_id]')
+    players = db.relationship('Player', uselist=True, back_populates='games', cascade='all, delete',
+                              secondary=player_game_association)
     missions = db.relationship('Mission', back_populates='game',
                                cascade='all, delete',
                                order_by='Mission.id')
@@ -127,12 +129,13 @@ class Game(db.Model):
         obj = {
             'id': self.id,
             'stage': self.stage.name,
-            'host_name': self.host.name
+            'host_name': self.host.name,
         }
         if include_details:
             obj['details'] = {
+
+                'host_id': self.host_id,
                 'leader_id': self.current_leader().id if self.current_leader() is not None else None,
-                'host_id': self.host.id,
                 'players': [player.to_dict() for player in self.players],
                 'missions': [mission.to_dict() for mission in self.missions],
                 'resistance_won': self.resistance_won,

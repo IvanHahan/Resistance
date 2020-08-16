@@ -3,7 +3,7 @@ import model
 from unittest import TestCase
 from app import create_app, db, game_manager
 import numpy as np
-np.random.seed(12)
+np.random.seed(13)
 
 
 class TestGameSetupStart(TestCase):
@@ -25,7 +25,7 @@ class TestGameSetupStart(TestCase):
     def test_join_game_success(self):
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
+            game_manager.join_game(game, 'test1', '2')
             self.assertTrue(len(db.session.query(model.Player)
                                 .filter(model.Player.game_id == game.id).all()) == 2)
 
@@ -33,37 +33,37 @@ class TestGameSetupStart(TestCase):
         with self.app.app_context():
             with self.assertRaises(errors.ForbiddenAction):
                 game = game_manager.create_game('test', '1')
-                game_manager.join_game(game.id, 'test', '2')
+                game_manager.join_game(game, 'test', '2')
 
     def test_join_game_equal_sid_fail(self):
         with self.app.app_context():
             with self.assertRaises(errors.ForbiddenAction):
                 game = game_manager.create_game('test', '1')
-                game_manager.join_game(game.id, 'test1', '1')
+                game_manager.join_game(game, 'test1', '1')
 
     def test_join_game_full_fail(self):
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
-            game_manager.join_game(game.id, 'test2', '3')
+            game_manager.join_game(game, 'test1', '2')
+            game_manager.join_game(game, 'test2', '3')
             with self.assertRaises(errors.GameFull):
-                game_manager.join_game(game.id, 'test3', '4')
+                game_manager.join_game(game, 'test3', '4')
 
     def test_join_game_started_fail(self):
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
-            game_manager.join_game(game.id, 'test2', '3')
+            game_manager.join_game(game, 'test1', '2')
+            game_manager.join_game(game, 'test2', '3')
             game_manager.update_game(game, sid='1')
             self.assertTrue(game.stage != model.GameStage.pending)
             with self.assertRaises(errors.ForbiddenAction):
-                game_manager.join_game(game.id, 'test3', '4')
+                game_manager.join_game(game, 'test3', '4')
             self.assertTrue(len(game.players) == 3)
 
     def test_leave_game_success(self):
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
+            game_manager.join_game(game, 'test1', '2')
             game_manager.leave_game(game.id, '2', 2)
             self.assertTrue(len(db.session.query(model.Player)
                                 .filter(model.Player.game_id == game.id).all()) == 1)
@@ -73,7 +73,7 @@ class TestGameSetupStart(TestCase):
     def test_leave_game_host_success(self):
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
+            game_manager.join_game(game, 'test1', '2')
             game_manager.leave_game(game.id, '1', 1)
             self.assertTrue(len(db.session.query(model.Game).all()) == 0)
             self.assertTrue(len(db.session.query(model.Player).all()) == 0)
@@ -81,8 +81,8 @@ class TestGameSetupStart(TestCase):
     def test_leave_game_started_success(self):
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
-            game_manager.join_game(game.id, 'test2', '3')
+            game_manager.join_game(game, 'test1', '2')
+            game_manager.join_game(game, 'test2', '3')
             game_manager.update_game(game, sid='1')
             self.assertTrue(game.stage != model.GameStage.pending)
             game_manager.leave_game(game.id, '2', 2)
@@ -94,7 +94,7 @@ class TestGameSetupStart(TestCase):
         with self.app.app_context():
             with self.assertRaises(errors.ForbiddenAction):
                 game = game_manager.create_game('test', '1')
-                game_manager.join_game(game.id, 'test1', '2')
+                game_manager.join_game(game, 'test1', '2')
                 game_manager.leave_game(game.id, '2', 1)
             self.assertTrue(len(db.session.query(model.Player)
                                 .filter(model.Player.game_id == game.id).all()) == 2)
@@ -102,7 +102,7 @@ class TestGameSetupStart(TestCase):
     def test_kick_player_host_success(self):
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
+            game_manager.join_game(game, 'test1', '2')
             game_manager.leave_game(game.id, '1', 2)
             self.assertTrue(len(db.session.query(model.Player)
                                 .filter(model.Player.game_id == game.id).all()) == 1)
@@ -111,7 +111,7 @@ class TestGameSetupStart(TestCase):
     def test_delete_game_host_success(self):
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
+            game_manager.join_game(game, 'test1', '2')
             game_manager.delete_game(game.id, '1')
             self.assertTrue(len(db.session.query(model.Player).all()) == 0)
             self.assertTrue(len(db.session.query(model.Game).all()) == 0)
@@ -120,7 +120,7 @@ class TestGameSetupStart(TestCase):
         with self.app.app_context():
             with self.assertRaises(errors.ForbiddenAction):
                 game = game_manager.create_game('test', '1')
-                game_manager.join_game(game.id, 'test1', '2')
+                game_manager.join_game(game, 'test1', '2')
                 game_manager.delete_game(game.id, '2')
             self.assertTrue(len(db.session.query(model.Player).all()) == 2)
             self.assertTrue(len(db.session.query(model.Game).all()) == 1)
@@ -128,16 +128,16 @@ class TestGameSetupStart(TestCase):
     def test_start_game_host_success(self):
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
-            game_manager.join_game(game.id, 'test2', '3')
+            game_manager.join_game(game, 'test1', '2')
+            game_manager.join_game(game, 'test2', '3')
             game_manager.update_game(game, sid='1')
             self.assertTrue(game.stage == model.GameStage.executing_mission)
 
     def test_start_game_non_host_fail(self):
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
-            game_manager.join_game(game.id, 'test2', '3')
+            game_manager.join_game(game, 'test1', '2')
+            game_manager.join_game(game, 'test2', '3')
             with self.assertRaises(errors.ForbiddenAction):
                 game_manager.update_game(game, sid='2')
             self.assertTrue(game.stage == model.GameStage.pending)
@@ -145,10 +145,22 @@ class TestGameSetupStart(TestCase):
     def test_start_game_not_enough_players_fail(self):
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
+            game_manager.join_game(game, 'test1', '2')
             with self.assertRaises(errors.InsufficientPlayersNumber):
                 game_manager.update_game(game, sid='1')
             self.assertTrue(game.stage == model.GameStage.pending)
+
+
+    def test_restart_game_host_success(self):
+        with self.app.app_context():
+            game = game_manager.create_game('test', '1')
+            game_manager.join_game(game, 'test1', '2')
+            game_manager.join_game(game, 'test2', '3')
+            game_manager.update_game(game, sid='1')
+            new_game = game_manager.new_game(game, sid='1')
+            self.assertTrue(len(game.players) == 3)
+            self.assertTrue(len(new_game.players) == 3)
+            self.assertTrue(new_game.stage == model.GameStage.pending)
 
 
 class TestMissionTroopStage(TestCase):
@@ -156,8 +168,8 @@ class TestMissionTroopStage(TestCase):
         self.app = create_app('config.Test')
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
-            game_manager.join_game(game.id, 'test2', '3')
+            game_manager.join_game(game, 'test1', '2')
+            game_manager.join_game(game, 'test2', '3')
             game_manager.update_game(game, sid='1')
             self.game_id = game.id
 
@@ -255,8 +267,8 @@ class TestMissionMissionStage(TestCase):
         self.app = create_app('config.Test')
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
-            game_manager.join_game(game.id, 'test2', '3')
+            game_manager.join_game(game, 'test1', '2')
+            game_manager.join_game(game, 'test2', '3')
             game_manager.update_game(game, sid='1')
             mission = game.current_mission()
             game_manager.update_mission(mission, sid=game.current_leader().sid, players_ids=[1])
@@ -300,8 +312,8 @@ class TestSubsequentMissionStage(TestCase):
         self.app = create_app('config.Test')
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
-            game_manager.join_game(game.id, 'test2', '3')
+            game_manager.join_game(game, 'test1', '2')
+            game_manager.join_game(game, 'test2', '3')
             game_manager.update_game(game, sid='1')
 
             game_manager.update_game(game, sid=game.current_leader().sid, players_ids=[1])
@@ -338,8 +350,8 @@ class TestGameProgress(TestCase):
         self.app = create_app('config.Test')
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
-            game_manager.join_game(game.id, 'test2', '3')
+            game_manager.join_game(game, 'test1', '2')
+            game_manager.join_game(game, 'test2', '3')
             game_manager.update_game(game, sid='1')
             self.game_id = game.id
 
@@ -388,11 +400,11 @@ class TestProdGameProgress(TestCase):
         self.app = create_app('config.TestProd')
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
-            game_manager.join_game(game.id, 'test1', '2')
-            game_manager.join_game(game.id, 'test2', '3')
-            game_manager.join_game(game.id, 'test3', '4')
-            game_manager.join_game(game.id, 'test4', '5')
-            game_manager.join_game(game.id, 'test5', '6')
+            game_manager.join_game(game, 'test1', '2')
+            game_manager.join_game(game, 'test2', '3')
+            game_manager.join_game(game, 'test3', '4')
+            game_manager.join_game(game, 'test4', '5')
+            game_manager.join_game(game, 'test5', '6')
             game_manager.update_game(game, sid='1')
             self.game_id = game.id
 

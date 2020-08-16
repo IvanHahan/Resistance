@@ -14,6 +14,7 @@ def db_commit(function):
             db.session.commit()
             return result
         except IntegrityError as err:
+            print(err)
             db.session.rollback()
             raise errors.ForbiddenAction()
 
@@ -54,6 +55,7 @@ class GameManager:
     def create_game(self, host_name, sid):
         game = model.Game()
         player = model.Player(name=host_name, sid=sid, game=game)
+        player.games.append(game)
         game.host = player
         db.session.add(game)
         db.session.add(player)
@@ -61,15 +63,31 @@ class GameManager:
         return game
 
     @db_commit
-    def join_game(self, game_id, name, sid):
-        game_stage = db.session.query(model.Game.stage).filter(db.and_(model.Game.id == game_id)).first()
+    def new_game(self, game_, **kwargs):
+        if game_.host.sid != kwargs['sid']:
+            raise errors.ForbiddenAction()
+
+        game = model.Game()
+        db.session.add(game)
+
+        for p in game_.players:
+            p.game = game
+            p.games.append(game)
+        game.host_id = game_.host.id
+
+        return game
+
+    @db_commit
+    def join_game(self, game, name, sid):
+        game_stage = db.session.query(model.Game.stage).filter(db.and_(model.Game.id == game.id)).first()
         if game_stage is None:
             raise errors.GameNotFound()
         elif game_stage[0] != model.GameStage.pending:
             raise errors.ForbiddenAction()
-        elif len(db.session.query(model.Player.id).filter(model.Player.game_id == game_id).all()) == self.max_players:
+        elif len(db.session.query(model.Player.id).filter(model.Player.game_id == game.id).all()) == self.max_players:
             raise errors.GameFull()
-        player = model.Player(name=name, sid=sid, game_id=game_id)
+        player = model.Player(name=name, sid=sid, game_id=game.id)
+        player.games.append(game)
         db.session.add(player)
         return player
 
@@ -97,13 +115,12 @@ class GameManager:
 
         game = db.session.query(model.Game).filter(model.Game.id == game_id).first()
         if game is not None and game.stage != model.GameStage.pending:
-            self._reset_game(game)
+            self.reset_game(game)
 
     @db_commit
     def delete_game(self, game_id, sid):
         player_id = db.session.query(model.Player.id).filter(db.and_(model.Player.sid == sid,
                                                                      model.Player.game_id == game_id)).first()
-
         if player_id is None:
             raise errors.UknownPlayer()
         elif db.session.query(model.Game).filter(db.and_(model.Game.host_id == player_id[0],
@@ -126,10 +143,10 @@ class GameManager:
         elif game.stage == model.GameStage.finished:
             raise errors.GameFinished()
 
-    def _reset_game(self, game):
+    def reset_game(self, game):
         game.stage = model.GameStage.pending
         db.session.query(model.Mission).filter(model.Mission.game_id == game.id).delete()
-        return actions.GameUpdated(game.to_dict())
+        return actions.GameUpdated(game.to_dict(), game.host_id)
 
     def _handle_pending(self, game, **kwargs):
         if game.host.sid != kwargs['sid']:
@@ -155,16 +172,17 @@ class GameManager:
 
     def _handle_executing_mission(self, game, **kwargs):
         action = self.update_mission(game.current_mission(), **kwargs)
+        print(game.current_mission())
         if game.current_mission().stage == model.RoundStage.mission_results:
             if game._complete_game():
                 game.next()
                 db.session.commit()
-                return actions.GameUpdated(game.to_dict())
+                return actions.GameUpdated(game.to_dict(), game.host_id)
             else:
                 game.stage = model.GameStage.start_mission
                 db.session.commit()
                 return self.update_game(game, **kwargs)
-        return actions.GameUpdated(game.to_dict())
+        return actions.GameUpdated(game.to_dict(), game.host_id)
 
     def _create_mission(self, game_id, num_players, index):
         mission = model.Mission(game_id=game_id, index=index,
@@ -257,7 +275,7 @@ class GameManager:
                 mission._stage = model.RoundStage.mission_results
                 mission.resistance_won = False
                 db.session.commit()
-                return actions.GameUpdated(mission.game.to_dict())
+                return actions.GameUpdated(mission.game.to_dict(), mission.game.host_id)
             mission._stage = model.RoundStage.proposal_request
             db.session.commit()
             return self.update_mission(mission, **kwargs)

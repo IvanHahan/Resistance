@@ -6,21 +6,10 @@ from app import socketio
 from game_manager import shared as game_manager
 
 
-@socketio.on('connect', namespace='/game')
-def on_connect():
-    print(session)
-    old_sid = request.args.get('sid', None)
-    if old_sid is not None:
-        try:
-            game_manager.update_player_sid(old_sid, request.sid)
-        except errors.GameError as err:
-            return str(err)
-
-
 @socketio.on('update_session', namespace='/game')
 def on_update_session(info):
     old_sid = info.get('sid', None)
-    game_id = info('game_id')
+    game_id = info['game_id']
     if old_sid is not None:
         try:
             player = game_manager.request_player_with_sid(old_sid, game_id)
@@ -127,7 +116,7 @@ def on_join(info):
         join_room(game.host_id, namespace='/game')
         session['player_id'] = player.id
         emit('game_updated', game.to_dict(), room=game.host_id, broadcast=True, namespace='/game')
-        return {'game': game.to_dict(), 'player': player.to_dict()}
+        return {'game': game.to_dict(), 'player': player.to_dict(), 'sid': request.sid}
     except errors.GameError as err:
         return str(err)
 
@@ -141,7 +130,6 @@ def on_create_game(info):
         emit('game_list', [game.to_dict(False) for game in game_manager.request_games()],
              broadcast=True, namespace='/lobby')
         session['player_id'] = game.host_id
-        print(session)
-        return {'game': game.to_dict(), 'player': game.host.to_dict()}
+        return {'game': game.to_dict(), 'player': game.host.to_dict(), 'sid': request.sid}
     except errors.GameError as err:
         return str(err)

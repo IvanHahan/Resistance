@@ -49,8 +49,6 @@ class Player(db.Model):
     name = db.Column(db.String, nullable=False, unique=False)
 
     game_id = db.Column(db.Integer, db.ForeignKey('games.id', name='fk_game_id', ondelete='cascade'), nullable=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'), nullable=False)
-    user = db.relationship('User', uselist=False)
     game = db.relationship('Game', uselist=False, foreign_keys=[game_id])
     games = db.relationship('Game', uselist=True, secondary=player_game_association, back_populates='players',
                             cascade='all, delete')

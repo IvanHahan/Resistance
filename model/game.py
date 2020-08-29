@@ -32,7 +32,7 @@ class Game(db.Model):
 
     host = db.relationship('Player', uselist=False, foreign_keys=[host_id], post_update=True)
     players = db.relationship('Player', uselist=True, back_populates='games', cascade='all, delete',
-                              secondary=player_game_association)
+                              secondary=player_game_association, order_by='Player.id')
     missions = db.relationship('Mission', back_populates='game',
                                cascade='all, delete-orphan',
                                order_by='Mission.id')

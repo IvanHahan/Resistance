@@ -25,7 +25,7 @@ class Mission(db.Model):
     _stage = db.Column(db.Enum(RoundStage), default=RoundStage.proposal_request, nullable=False)
 
     voting_id = db.Column(db.Integer, db.ForeignKey('votings.id'), nullable=True)
-    game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
+    game_id = db.Column(db.Integer, db.ForeignKey('games.id', ondelete='cascade'), nullable=False)
     num_of_fails = db.Column(db.Integer, default=1, nullable=False)
 
     voting = db.relationship('Voting', uselist=False, foreign_keys=[voting_id], cascade='all, delete-orphan',

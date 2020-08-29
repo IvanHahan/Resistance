@@ -6,7 +6,7 @@ from flasgger import Swagger
 import logging
 
 db = SQLAlchemy()
-socketio = SocketIO()
+socketio = SocketIO(manage_session=False)
 swagger = Swagger()
 handlers = [logging.StreamHandler()]
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", handlers=handlers)
@@ -26,7 +26,6 @@ def create_app(config='config.Debug'):
     db.init_app(app)
     socketio.init_app(app, cors_allowed_origins="*")
     swagger.init_app(app)
-
     with app.app_context():
         db.drop_all()
         db.create_all()

@@ -7,8 +7,8 @@ sio = socketio.AsyncClient()
 
 
 # @sio.event
-# async def connect():
-#     print('client connected')
+async def connect():
+    print('client connected')
 
 
 # @sio.on('player_joined')
@@ -23,7 +23,7 @@ sio = socketio.AsyncClient()
 
 
 async def start_server():
-    await sio.connect('http://192.168.0.102:5000', namespaces=['lobby'])
+    await sio.connect('http://192.168.0.102:5000/game', )
     await sio.wait()
 
 

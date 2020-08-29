@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, session
 from flask_socketio import leave_room, emit, join_room
 
 import errors
@@ -8,7 +8,31 @@ from game_manager import shared as game_manager
 
 @socketio.on('connect', namespace='/game')
 def on_connect():
-    print(request.sid)
+    print(session)
+    old_sid = request.args.get('sid', None)
+    if old_sid is not None:
+        try:
+            game_manager.update_player_sid(old_sid, request.sid)
+        except errors.GameError as err:
+            return str(err)
+
+
+@socketio.on('update_session', namespace='/game')
+def on_update_session(info):
+    old_sid = info.get('sid', None)
+    game_id = info('game_id')
+    if old_sid is not None:
+        try:
+            player = game_manager.request_player_with_sid(old_sid, game_id)
+            game_manager.update_player_sid(old_sid, request.sid)
+            game = player.game
+            join_room(player.game.host_id)
+            emit('game_updated', game.to_dict(), room=game.host_id, broadcast=False, namespace='/game')
+        except errors.UknownPlayer:
+            return {'sid': request.sid}
+        except errors.GameError as err:
+            return str(err)
+    return {'sid': request.sid}
 
 
 @socketio.on('leave_game', namespace='/game')
@@ -23,6 +47,7 @@ def on_leave(info):
         emit('game_updated', game.to_dict(), room=game.host_id, broadcast=True, namespace='/game')
         emit('game_list', [game.to_dict(False) for game in game_manager.request_games()],
              namespace='/lobby', broadcast=True)
+        del session['player_id']
         leave_room(game.host_id, sid=player.sid)
         return 'You left game'
     except errors.GameError as err:
@@ -61,6 +86,7 @@ def on_delete_game(info):
         emit('game_updated', 'Game deleted', room=game.host_id)
         emit('game_list', [game.to_dict(False) for game in game_manager.request_games()],
              namespace='/lobby', broadcast=True)
+        del session['player_id']
         return 'Game deleted'
     except errors.GameError as err:
         return str(err)
@@ -99,6 +125,7 @@ def on_join(info):
         player = game_manager.join_game(game, username, request.sid)
         game = game_manager.request_game(game_id)
         join_room(game.host_id, namespace='/game')
+        session['player_id'] = player.id
         emit('game_updated', game.to_dict(), room=game.host_id, broadcast=True, namespace='/game')
         return {'game': game.to_dict(), 'player': player.to_dict()}
     except errors.GameError as err:
@@ -113,6 +140,8 @@ def on_create_game(info):
         join_room(game.host_id, namespace='/game')
         emit('game_list', [game.to_dict(False) for game in game_manager.request_games()],
              broadcast=True, namespace='/lobby')
+        session['player_id'] = game.host_id
+        print(session)
         return {'game': game.to_dict(), 'player': game.host.to_dict()}
     except errors.GameError as err:
         return str(err)

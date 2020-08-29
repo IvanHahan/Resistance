@@ -34,7 +34,7 @@ class Game(db.Model):
     players = db.relationship('Player', uselist=True, back_populates='games', cascade='all, delete',
                               secondary=player_game_association)
     missions = db.relationship('Mission', back_populates='game',
-                               cascade='all, delete',
+                               cascade='all, delete-orphan',
                                order_by='Mission.id')
 
     # @property

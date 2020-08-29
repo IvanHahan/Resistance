@@ -4,6 +4,7 @@ gevent
 psycopg2
 flask-sqlalchemy
 flask-socketio
+flask-session
 gunicorn
 flasgger
 numpy

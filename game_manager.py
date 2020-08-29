@@ -49,6 +49,19 @@ class GameManager:
             raise errors.UknownPlayer()
         return player
 
+    def request_player_with_sid(self, sid, game_id):
+        player = db.session.query(model.Player).filter(db.and_(model.Player.sid == sid,
+                                                               model.Player.game_id == game_id)).first()
+        if player is None:
+            raise errors.UknownPlayer()
+        return player
+
+    @db_commit
+    def update_player_sid(self, old_sid, sid):
+        player = db.session.query(model.Player).filter(model.Player.sid == old_sid).first()
+        if player is not None:
+            player.sid = sid
+
     # Setters
 
     @db_commit
@@ -172,7 +185,6 @@ class GameManager:
 
     def _handle_executing_mission(self, game, **kwargs):
         action = self.update_mission(game.current_mission(), **kwargs)
-        print(game.current_mission())
         if game.current_mission().stage == model.RoundStage.mission_results:
             if game._complete_game():
                 game.next()

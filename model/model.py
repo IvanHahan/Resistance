@@ -3,6 +3,7 @@ import enum
 import numpy as np
 
 from app import db
+from flask_login import UserMixin
 
 
 player_game_association = db.Table('player_game', db.metadata,
@@ -43,11 +44,13 @@ class Player(db.Model):
     )
 
     id = db.Column(db.Integer, primary_key=True)
+    role = db.Column(db.Enum(Role), nullable=True)
     sid = db.Column(db.String, nullable=False, unique=False)
     name = db.Column(db.String, nullable=False, unique=False)
-    role = db.Column(db.Enum(Role), nullable=True)
 
     game_id = db.Column(db.Integer, db.ForeignKey('games.id', name='fk_game_id', ondelete='cascade'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='cascade'), nullable=False)
+    user = db.relationship('User', uselist=False)
     game = db.relationship('Game', uselist=False, foreign_keys=[game_id])
     games = db.relationship('Game', uselist=True, secondary=player_game_association, back_populates='players',
                             cascade='all, delete')
@@ -59,6 +62,9 @@ class Player(db.Model):
             'game_id': self.game_id,
             'name': self.name
         }
+
+    def __repr__(self):
+        return f'Player {self.id}, {self.sid}'
 
 
 class TroopProposal(db.Model):

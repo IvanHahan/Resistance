@@ -26,7 +26,7 @@ class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     stage = db.Column(db.Enum(GameStage), default=GameStage.pending, nullable=False)
     resistance_won = db.Column(db.Boolean, nullable=True)
-    _leader_idx = db.Column(db.Integer, nullable=False, default=-1)
+    _leader_idx = db.Column(db.Integer, nullable=True)
 
     host_id = db.Column(db.Integer, db.ForeignKey('players.id', use_alter=True, name='fk_host_id', ondelete='cascade'), nullable=True)
 
@@ -91,7 +91,7 @@ class Game(db.Model):
     def current_leader(self):
         try:
             return self.players[self._leader_idx]
-        except IndexError:
+        except TypeError:
             return None
 
     def update(self, mission_state=None, **kwargs):

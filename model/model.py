@@ -70,9 +70,9 @@ class TroopProposal(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    proposer_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)
-    voting_id = db.Column(db.Integer, db.ForeignKey('votings.id'), nullable=True)
-    mission_id = db.Column(db.Integer, db.ForeignKey('missions.id'), nullable=False)
+    proposer_id = db.Column(db.Integer, db.ForeignKey('players.id', ondelete='cascade'), nullable=False)
+    voting_id = db.Column(db.Integer, db.ForeignKey('votings.id', ondelete='cascade'), nullable=True)
+    mission_id = db.Column(db.Integer, db.ForeignKey('missions.id', ondelete='cascade'), nullable=False)
 
     members = db.relationship('Player', uselist=True, secondary=player_proposal_association)
     proposer = db.relationship('Player', uselist=False)

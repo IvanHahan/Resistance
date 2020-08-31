@@ -3,7 +3,6 @@ import enum
 import numpy as np
 
 from app import db
-from flask_login import UserMixin
 
 
 player_game_association = db.Table('player_game', db.metadata,

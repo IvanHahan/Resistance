@@ -112,7 +112,7 @@ class TestGameSetupStart(TestCase):
         with self.app.app_context():
             game = game_manager.create_game('test', '1')
             game_manager.join_game(game, 'test1', '2')
-            game_manager.delete_game(game.id, '1')
+            game_manager.try_delete_game(game.id, '1')
             self.assertTrue(len(db.session.query(model.Player).all()) == 0)
             self.assertTrue(len(db.session.query(model.Game).all()) == 0)
 
@@ -121,7 +121,7 @@ class TestGameSetupStart(TestCase):
             with self.assertRaises(errors.ForbiddenAction):
                 game = game_manager.create_game('test', '1')
                 game_manager.join_game(game, 'test1', '2')
-                game_manager.delete_game(game.id, '2')
+                game_manager.try_delete_game(game.id, '2')
             self.assertTrue(len(db.session.query(model.Player).all()) == 2)
             self.assertTrue(len(db.session.query(model.Game).all()) == 1)
 

@@ -57,6 +57,14 @@ class GameManager:
         return player
 
     @db_commit
+    def activate_player(self, player):
+        player.active = True
+
+    @db_commit
+    def deactivate_player(self, player):
+        player.active = False
+
+    @db_commit
     def update_player_sid(self, old_sid, sid):
         player = db.session.query(model.Player).filter(model.Player.sid == old_sid).first()
         if player is not None:
@@ -130,17 +138,30 @@ class GameManager:
         if game is not None and game.stage != model.GameStage.pending:
             self.reset_game(game)
 
-    @db_commit
-    def delete_game(self, game_id, sid):
+    def is_host(self, game_id, sid):
         player_id = db.session.query(model.Player.id).filter(db.and_(model.Player.sid == sid,
                                                                      model.Player.game_id == game_id)).first()
         if player_id is None:
             raise errors.UknownPlayer()
         elif db.session.query(model.Game).filter(db.and_(model.Game.host_id == player_id[0],
                                                          model.Game.id == game_id)).first() is None:
+            return False
+        return True
+
+    def try_delete_game(self, game_id, sid):
+
+        if self.is_host(game_id, sid):
+            self.delete_game(game_id)
+        else:
             raise errors.ForbiddenAction()
 
-        db.session.query(model.Game).filter(model.Game.host_id == player_id[0]).delete()
+    @db_commit
+    def delete_game(self, game_id):
+        db.session.query(model.Game).filter(model.Game.id == game_id).delete()
+
+    def is_game_active(self, game_id):
+        return db.session.query(model.Player.id).filter(db.and_(model.Player.game_id == game_id,
+                                                             model.Player.active == True)) > 0
 
     @db_commit
     def update_game(self, game, **kwargs):

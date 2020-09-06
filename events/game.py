@@ -6,6 +6,20 @@ from app import socketio
 from game_manager import shared as game_manager
 
 
+@socketio.on('disconnect', namespace='/game')
+def on_disconnect():
+    player_id = session.get('player_id')
+    game_id = session.get('game_id')
+    if player_id is not None:
+        player = game_manager.request_player(player_id)
+        game_manager.deactivate_player(player)
+    if game_id is not None:
+        if not game_manager.is_game_active(game_id):
+            game = game_manager.request_game(game_id)
+            game_manager.delete_game(game_id)
+            emit('game_updated', 'Game deleted', room=game.host_id)
+
+
 @socketio.on('update_session', namespace='/game')
 def on_update_session(info):
     old_sid = info.get('sid', None)
@@ -71,7 +85,7 @@ def on_delete_game(info):
     game_id = info['game_id']
     try:
         game = game_manager.request_game(game_id)
-        game_manager.delete_game(game_id, request.sid)
+        game_manager.try_delete_game(game_id, request.sid)
         emit('game_updated', 'Game deleted', room=game.host_id)
         emit('game_list', [game.to_dict(False) for game in game_manager.request_games()],
              namespace='/lobby', broadcast=True)

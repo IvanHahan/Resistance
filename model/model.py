@@ -46,6 +46,7 @@ class Player(db.Model):
     role = db.Column(db.Enum(Role), nullable=True)
     sid = db.Column(db.String, nullable=False, unique=False)
     name = db.Column(db.String, nullable=False, unique=False)
+    active = db.Column(db.Boolean, nullable=False, default=True)
 
     game_id = db.Column(db.Integer, db.ForeignKey('games.id', name='fk_game_id', ondelete='cascade'), nullable=True)
     game = db.relationship('Game', uselist=False, foreign_keys=[game_id])
@@ -57,7 +58,8 @@ class Player(db.Model):
             'id': self.id,
             'role': self.role.name if self.role is not None else None,
             'game_id': self.game_id,
-            'name': self.name
+            'name': self.name,
+            'is_active': self.active
         }
 
     def __repr__(self):

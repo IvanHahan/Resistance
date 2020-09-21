@@ -13,11 +13,6 @@ def on_disconnect():
     if player_id is not None:
         player = game_manager.request_player(player_id)
         game_manager.deactivate_player(player)
-    if game_id is not None:
-        if not game_manager.is_game_active(game_id):
-            game = game_manager.request_game(game_id)
-            game_manager.delete_game(game_id)
-            emit('game_updated', 'Game deleted', room=game.host_id)
 
 
 @socketio.on('update_session', namespace='/game')

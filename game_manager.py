@@ -63,6 +63,8 @@ class GameManager:
     @db_commit
     def deactivate_player(self, player):
         player.active = False
+        if not self.is_game_active(player.game_id):
+            self.delete_game(player.game_id)
 
     @db_commit
     def update_player_sid(self, old_sid, sid):
@@ -160,8 +162,8 @@ class GameManager:
         db.session.query(model.Game).filter(model.Game.id == game_id).delete()
 
     def is_game_active(self, game_id):
-        return db.session.query(model.Player.id).filter(db.and_(model.Player.game_id == game_id,
-                                                             model.Player.active == True)) > 0
+        return len(db.session.query(model.Player.id).filter(db.and_(model.Player.game_id == game_id,
+                                                                model.Player.active == True)).all()) > 0
 
     @db_commit
     def update_game(self, game, **kwargs):

@@ -173,6 +173,16 @@ class TestGameSetupStart(TestCase):
             self.assertTrue(len(db.session.query(model.Game).all()) == 0)
             self.assertTrue(len(db.session.query(model.Player).all()) == 0)
 
+    def test_delete_game_reactivate_players_success(self):
+        with self.app.app_context():
+            game = game_manager.create_game('test', '1')
+            game_manager.join_game(game, 'test1', '2')
+            p = game_manager.join_game(game, 'test2', '3')
+            game_manager.deactivate_player(p)
+            game_manager.activate_player(p)
+            game_manager.update_game(game, sid='1')
+            self.assertTrue(game.stage == model.GameStage.executing_mission)
+
 
 class TestMissionTroopStage(TestCase):
     def setUp(self):

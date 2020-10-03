@@ -91,7 +91,7 @@ class Game(db.Model):
     def current_leader(self):
         try:
             return self.players[self._leader_idx]
-        except TypeError:
+        except (TypeError, IndexError):
             return None
 
     def update(self, mission_state=None, **kwargs):

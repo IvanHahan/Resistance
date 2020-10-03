@@ -26,12 +26,21 @@ class TestGameSetupStart(TestCase):
         client2.connect('/game')
         client3 = socketio.test_client(self.app, flask_test_client=self.app.test_client())
         client3.connect('/game')
+        client4 = socketio.test_client(self.app, flask_test_client=self.app.test_client())
+        client4.connect('/game')
+        client5 = socketio.test_client(self.app, flask_test_client=self.app.test_client())
+        client5.connect('/game')
 
         result1 = client1.emit('create_game', {'username': 'Ivan'}, namespace='/game', callback=True)
         result2 = client2.emit('join_game', {'username': 'Petr', 'game_id': result1['game']['id']},
                                namespace='/game', callback=True)
         result3 = client3.emit('join_game', {'username': 'Liza', 'game_id': result1['game']['id']},
                                namespace='/game', callback=True)
+        result4 = client3.emit('join_game', {'username': 'Dima', 'game_id': result1['game']['id']},
+                               namespace='/game', callback=True)
+        result5 = client3.emit('join_game', {'username': 'Kosta', 'game_id': result1['game']['id']},
+                               namespace='/game', callback=True)
+        print(client1.get_received())
         self.assertTrue(client1.emit('start_game', {'game_id': result1['game']['id']},
                        namespace='/game', callback=True) == 'Game started')
         game1 = client1.get_received(namespace='/game')[-1]['args'][0]

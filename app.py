@@ -15,7 +15,7 @@ from events import *
 from model import *
 
 
-def create_app(config='config.Debug'):
+def create_app(config='config.TestProd'):
     global game_manager
 
     app = Flask(__name__)
@@ -41,4 +41,4 @@ if __name__ == '__main__':
 
     app = create_app()
 
-    socketio.run(app, host='192.168.0.102', port=5000)
+    socketio.run(app, host='192.168.0.103', port=5000)

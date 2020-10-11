@@ -65,6 +65,9 @@ class GameManager:
         player.active = False
         if not self.is_game_active(player.game_id):
             self.delete_game(player.game_id)
+            return actions.GameDeleted(player.game.host_id, self.request_games())
+        else:
+            return actions.GameUpdated(player.game.to_dict(), player.game.host_id)
 
     @db_commit
     def update_player_sid(self, old_sid, sid):

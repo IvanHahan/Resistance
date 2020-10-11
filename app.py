@@ -6,7 +6,7 @@ from flasgger import Swagger
 import logging
 
 db = SQLAlchemy()
-socketio = SocketIO(manage_session=False)
+socketio = SocketIO()
 swagger = Swagger()
 handlers = [logging.StreamHandler()]
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", handlers=handlers)
@@ -20,7 +20,7 @@ def create_app(config='config.TestProd'):
 
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'secret!'
-    app.config['SESSION_TYPE'] = 'filesystem'
+    # app.config['SESSION_TYPE'] = 'filesystem'
     app.config.from_object(config)
 
     db.init_app(app)

@@ -136,9 +136,6 @@ def on_create_game(info):
     username = info['username']
     try:
         game = game_manager.create_game(username, request.sid)
-        # player = game_manager.join_game(game, '1', '1')
-        # player = game_manager.join_game(game, '2', '2')
-        # player = game_manager.join_game(game, '3', '3')
         join_room(game.host_id, namespace='/game')
         emit('game_list', [game.to_dict(False) for game in game_manager.request_games()],
              broadcast=True, namespace='/lobby')

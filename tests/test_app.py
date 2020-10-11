@@ -5,8 +5,6 @@ from unittest import TestCase
 
 import numpy as np
 
-from app import create_app, db, socketio
-
 np.random.seed(13)
 
 

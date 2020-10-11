@@ -61,5 +61,12 @@ class MissionComplete(Callback):
 
 
 class GameDeleted(Callback):
+    def __init__(self, game_id, active_games):
+        super().__init__(game_id)
+        self.active_games = active_games
+
     def execute(self):
         emit('game_updated', 'Game deleted', room=self.room_id, namespace='/game')
+        emit('game_list', [game.to_dict(False) for game in self.active_games],
+             namespace='/lobby', broadcast=True)
+

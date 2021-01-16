@@ -46,8 +46,9 @@ class TestGameSetupStart(TestCase):
             game = game_manager.create_game('test', '1')
             game_manager.join_game(game, 'test1', '2')
             game_manager.join_game(game, 'test2', '3')
+            game_manager.join_game(game, 'test3', '4')
             with self.assertRaises(errors.GameFull):
-                game_manager.join_game(game, 'test3', '4')
+                game_manager.join_game(game, 'test4', '5')
 
     def test_join_game_started_fail(self):
         with self.app.app_context():
@@ -182,6 +183,15 @@ class TestGameSetupStart(TestCase):
             game_manager.activate_player(p)
             game_manager.update_game(game, sid='1')
             self.assertTrue(game.stage == model.GameStage.executing_mission)
+
+    def test_multiple_spies_setup(self):
+        with self.app.app_context():
+            game = game_manager.create_game('test', '1')
+            game_manager.join_game(game, 'test1', '2')
+            game_manager.join_game(game, 'test2', '3')
+            game_manager.join_game(game, 'test3', '4')
+            game_manager.update_game(game, sid='1')
+            self.assertEqual(len(game.spies), game_manager.rules['team'][4]['spies'], 'Spies number do not match')
 
 
 class TestMissionTroopStage(TestCase):

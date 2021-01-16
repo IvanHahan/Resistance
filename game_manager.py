@@ -64,8 +64,9 @@ class GameManager:
     def deactivate_player(self, player):
         player.active = False
         if not self.is_game_active(player.game_id):
+            host_id = player.game.host_id
             self.delete_game(player.game_id)
-            return actions.GameDeleted(player.game.host_id, self.request_games())
+            return actions.GameDeleted(host_id, self.request_games())
         else:
             return actions.GameUpdated(player.game.to_dict(), player.game.host_id)
 

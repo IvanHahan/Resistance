@@ -12,3 +12,14 @@ team:
       - 1
       - 1
       - 1
+  4:
+    spies: 2
+    resistance: 2
+    mission_team:
+      - 2
+      - 3
+      - 2
+    fails_num:
+      - 1
+      - 1
+      - 1

@@ -48,18 +48,21 @@ class Game(db.Model):
             return GameStatus.finished
         return GameStatus.in_progress
 
+    @property
+    def spies(self):
+        return [p for p in self.players if p.role == Role.spy]
+
     def next(self):
         self.stage = GameStage(int(self.stage.value) + 1)
         return self.stage
 
     def setup(self, spies_num):
-        spies_idx = np.random.randint(0, len(self.players), spies_num)
+        spies_idx = np.random.choice(len(self.players), spies_num, replace=False)
         for i in range(len(self.players)):
             if i in spies_idx:
                 self.players[i].role = Role.spy
             else:
                 self.players[i].role = Role.resistance
-
         self._leader_idx = np.random.randint(0, len(self.players))
 
     def _complete_game(self):

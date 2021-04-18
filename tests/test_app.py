@@ -18,8 +18,7 @@ class TestGameSetupStart(TestCase):
             db.drop_all()
 
     def test_reconnect_make_proposal_success(self):
-        client1 = socketio.test_client(self.app, flask_test_client=self.app.test_client())
-        client1.connect('/game')
+        client1 = socketio.test_client(self.app, namespace='/game', flask_test_client=self.app.test_client())
         client2 = socketio.test_client(self.app, flask_test_client=self.app.test_client())
         client2.connect('/game')
         client3 = socketio.test_client(self.app, flask_test_client=self.app.test_client())

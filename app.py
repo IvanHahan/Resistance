@@ -41,4 +41,4 @@ if __name__ == '__main__':
 
     app = create_app()
 
-    socketio.run(app, host='192.168.0.103', port=5000)
+    socketio.run(app, port=5000)

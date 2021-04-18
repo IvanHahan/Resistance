@@ -507,5 +507,31 @@ class TestProdGameProgress(TestCase):
             self.assertTrue(game.stage == model.GameStage.finished)
             self.assertTrue(game.resistance_won is True)
 
+    def test_multiple_games(self):
 
+        self.test_game_complete_resistance_won_success()
 
+        with self.app.app_context():
+            game = game_manager.request_game(self.game_id)
+            game = game_manager.new_game(game, sid=game.host.sid)
+
+            self.game_id = game.id
+            self.assertEqual(game.stage, model.GameStage.pending)
+            game_manager.update_game(game, sid='1')
+            self.assertEqual(game.stage, model.GameStage.executing_mission)
+            game_manager.leave_game(game.id, '6', 6)
+            game_manager.join_game(game, 'new', '6')
+            self.assertEqual(game.stage, model.GameStage.pending)
+
+            game_manager.update_game(game, sid='1')
+
+            self.assertEqual(len(db.session.query(model.Game.id).all()), 2)
+            self.assertEqual(len(db.session.query(model.Player.id).all()), 6)
+            self.assertTrue(len(game.players), 6)
+
+        self.test_game_complete_resistance_won_success()
+
+        with self.app.app_context():
+            self.assertEqual(len(db.session.query(model.Game.id).all()), 2)
+            self.assertEqual(len(db.session.query(model.Player.id).all()), 6)
+            self.assertTrue(len(game.players), 6)

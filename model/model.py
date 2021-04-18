@@ -119,8 +119,8 @@ class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     result = db.Column(db.Boolean, nullable=True, default=None)
 
-    voter_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)
-    voting_id = db.Column(db.Integer, db.ForeignKey('votings.id'), nullable=False)
+    voter_id = db.Column(db.Integer, db.ForeignKey('players.id', ondelete='cascade'), nullable=False)
+    voting_id = db.Column(db.Integer, db.ForeignKey('votings.id', ondelete='cascade'), nullable=False)
 
     voter = db.relationship('Player', uselist=False)
     voting = db.relationship('Voting', uselist=False, back_populates='votes')

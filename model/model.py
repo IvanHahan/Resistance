@@ -78,7 +78,7 @@ class TroopProposal(db.Model):
     members = db.relationship('Player', uselist=True, secondary=player_proposal_association)
     proposer = db.relationship('Player', uselist=False)
     voting = db.relationship('Voting', uselist=False, cascade='all, delete', single_parent=True)
-    mission = db.relationship('Mission', uselist=False)
+    mission = db.relationship('Mission', uselist=False, back_populates='troop_proposals')
 
     def to_dict(self):
         return {

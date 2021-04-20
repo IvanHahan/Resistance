@@ -31,7 +31,7 @@ class Mission(db.Model):
     voting = db.relationship('Voting', uselist=False, foreign_keys=[voting_id], cascade='all, delete-orphan',
                              single_parent=True)
     troop_proposals = db.relationship('TroopProposal', uselist=True, cascade='all, delete-orphan',
-                                      order_by='TroopProposal.id')
+                                      order_by='TroopProposal.id', back_populates='mission')
     troop_members = db.relationship('Player', uselist=True, secondary=player_mission_association)
     game = db.relationship('Game', uselist=False, foreign_keys=[game_id], back_populates='missions')
 

@@ -15,7 +15,7 @@ def db_commit(function):
             db.session.commit()
             return result
         except IntegrityError as err:
-            logging.error(str(err))
+            # logging.error(str(err))
             db.session.rollback()
             raise errors.ForbiddenAction()
 

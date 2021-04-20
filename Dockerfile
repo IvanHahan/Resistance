@@ -9,7 +9,8 @@ RUN pip install --upgrade pip; \
     pip install -r requirements.txt
 
 EXPOSE 5000/tcp
-ARG APP_CONFIG
-ENV APP_CONFIG=$APP_CONFIG
+
+ENV APP_CONFIG='Default'
+ENV PORT=5000
 
 CMD gunicorn run:app --worker-class eventlet -b=0.0.0.0:$PORT

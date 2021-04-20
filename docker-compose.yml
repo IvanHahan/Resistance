@@ -19,15 +19,14 @@ services:
     image: postgres:latest
     container_name: db
     volumes:
-      - $HOME/docker/volumes/postgres/:/var/lib/postgresql/data
+      - ./data/db:/var/lib/postgresql/data
     ports:
       - 5405:5432
     restart: always
     environment:
       - POSTGRES_USER=resistance
       - POSTGRES_PASSWORD=kjuyguyf24234cvbinm523b5yt6
-      - POSTGRES_DB=resistance, resistance_test
-      - POSTGRES_DBNAME=resistance, resistance_test
+      - POSTGRES_DB=resistance
     networks:
       - resistance
 

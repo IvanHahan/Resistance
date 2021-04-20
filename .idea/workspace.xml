@@ -1,20 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="237c5862-05fd-4826-8547-d26a07fc07aa" name="Default Changelist" comment="update dockerfile">
-      <change afterPath="$PROJECT_DIR$/tests/test_game_manager/test_game_start.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/test_game_manager/test_mission_mission_stage.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/test_game_manager/test_mission_troop_stage.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Resistance.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Resistance.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="237c5862-05fd-4826-8547-d26a07fc07aa" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/mission.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/mission.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_game_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_game_manager/test_full_game.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -323,14 +312,7 @@
       <workItem from="1618909235676" duration="229000" />
       <workItem from="1618909473787" duration="842000" />
       <workItem from="1618910789377" duration="508000" />
-      <workItem from="1618911307795" duration="3792000" />
-    </task>
-    <task id="LOCAL-00029" summary="make the whole pipeline through game class">
-      <created>1595239531520</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1595239531520</updated>
+      <workItem from="1618911307795" duration="6147000" />
     </task>
     <task id="LOCAL-00030" summary="fix model tests">
       <created>1595252278915</created>
@@ -668,7 +650,14 @@
       <option name="project" value="LOCAL" />
       <updated>1618909056827</updated>
     </task>
-    <option name="localTasksCounter" value="78" />
+    <task id="LOCAL-00078" summary="add more tests">
+      <created>1618915255147</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1618915255147</updated>
+    </task>
+    <option name="localTasksCounter" value="79" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -687,7 +676,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="refactor. make events folder" />
     <MESSAGE value="refactor" />
     <MESSAGE value="add ddocker" />
     <MESSAGE value="fixed db" />
@@ -712,7 +700,8 @@
     <MESSAGE value="fix session not being saved" />
     <MESSAGE value="fix single spy error" />
     <MESSAGE value="update dockerfile" />
-    <option name="LAST_COMMIT_MESSAGE" value="update dockerfile" />
+    <MESSAGE value="add more tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="add more tests" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
